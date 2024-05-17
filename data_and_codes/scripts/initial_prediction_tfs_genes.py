@@ -24,7 +24,7 @@ from tqdm import tqdm
 # In[7]:
 
 
-md = pd.read_csv('../matrices/metadata.tsv', sep='\t', index_col=0)
+md = pd.read_csv('../00_matrices/metadata.tsv', sep='\t', index_col=0)
 md.head()
 
 
@@ -93,7 +93,7 @@ def clr_(data, eps=1e-6):
 
 # # Model
 
-# In[ ]:
+# In[64]:
 
 
 matrices = ['Matrix_MX_all', 'Matrix_M1_all', 'Matrix_M0_all', 'Matrix_guidi_all', 'Matrix_salazar_all', 'Matrix_stress_all',
@@ -110,13 +110,13 @@ label_encoder = LabelEncoder()
 
 # Iterate over each matrix and variable to train the model
 for matrix_name in tqdm(matrices, desc='Processing matrices'):
-    matrix = pd.read_csv(f'../matrices/{matrix_name}.tsv', sep='\t', index_col=0)
+    matrix = pd.read_csv(f'../00_matrices/{matrix_name}.tsv', sep='\t', index_col=0)
     matrix = clr_(matrix)  # Apply clr transformation
     
     for variable in tqdm(variables, desc=f'Variables in {matrix_name}', leave=False):
         X = matrix
         y = label_encoder.fit_transform(md[variable])  # Encode labels
-        
+         
         # Store f1 scores for each cycle
         f1_scores = []
 
