@@ -50,7 +50,7 @@ def clr_(data, eps=1e-6):
 
 # In[7]:
 
-
+input_dir = '../00_matrices'
 out_dir = '../../out_results/out_fingerprint/'
 
 
@@ -59,7 +59,7 @@ out_dir = '../../out_results/out_fingerprint/'
 # In[3]:
 
 
-md = pd.read_csv('../matrices/metadata.tsv', sep='\t', index_col=[0])
+md = pd.read_csv(f'{input_dir}/metadata.tsv', sep='\t', index_col=[0])
 md.head()
 
 
@@ -70,7 +70,7 @@ md.head()
 
 def plot_matrix_abundance(matrix_type, sample_name):
     
-    matrix_file = f'../matrices/Matrix_{matrix_type}_all.tsv'
+    matrix_file = f'{input_dir}/Matrix_{matrix_type}_all.tsv'
     df = pd.read_csv(matrix_file, sep='\t', index_col=0)
     clr_df = clr_(df) # centered-log-ratio normalization
 
@@ -109,7 +109,7 @@ for matrix_type in matrix_types:
 
 def plot_matrix_abundance_selected(matrix_type, sample_name, selected_indices):
     
-    matrix_file = f'../matrices/Matrix_{matrix_type}_srf.tsv'
+    matrix_file = f'{input_dir}/Matrix_{matrix_type}_srf.tsv'
     df = pd.read_csv(matrix_file, sep='\t', index_col=0)
     clr_df = clr_(df)  # centered-log-ratio normalization
 
@@ -152,7 +152,7 @@ for matrix_type in matrix_types:
 
 def plot_mean_matrix_abundance_selected(matrix_type, sample_name, selected_indices):
     
-    matrix_file = f'../matrices/Matrix_{matrix_type}_srf.tsv'
+    matrix_file = f'{input_dir}/Matrix_{matrix_type}_srf.tsv'
     df = pd.read_csv(matrix_file, sep='\t', index_col=0)
     clr_df = clr_(df)  # centered-log-ratio normalization
 
@@ -197,7 +197,7 @@ for matrix_type in matrix_types:
 
 
 def plot_mean_matrix_abundance_comparison1(matrix_type, sample_name, selected_indices, df_fingerprint):
-    matrix_file = f'../matrices/Matrix_{matrix_type}_srf.tsv'
+    matrix_file = f'{input_dir}/Matrix_{matrix_type}_srf.tsv'
     df = pd.read_csv(matrix_file, sep='\t', index_col=0)
     clr_df = clr_(df)  # centered-log-ratio normalization
 
@@ -255,7 +255,7 @@ sample_name = 'TSC013'
 
 selected_indices = ['TSC272', 'TSC065', 'TSC254', 'TSC013', 'TSC242', 'TSC216', 'TSC027', 'TSC135', 'TSC141', 'TSC167']
 
-df_fingerprint = pd.read_csv('../matrices/Matrix_outsource.tsv', sep='\t', index_col=0)
+df_fingerprint = pd.read_csv(f'{input_dir}/Matrix_outsource.tsv', sep='\t', index_col=0)
 
 for matrix_type in matrix_types:
     plot_mean_matrix_abundance_comparison1(matrix_type, sample_name, selected_indices, df_fingerprint)
@@ -267,7 +267,7 @@ for matrix_type in matrix_types:
 
 
 def plot_linear_regression(matrix_type, sample_name, selected_indices, df_fingerprint):
-    matrix_file = f'../matrices/Matrix_{matrix_type}_srf.tsv'
+    matrix_file = f'{input_dir}/Matrix_{matrix_type}_srf.tsv'
     df = pd.read_csv(matrix_file, sep='\t', index_col=0)
     clr_df = clr_(df)  # centered-log-ratio normalization
 
@@ -320,7 +320,7 @@ for matrix_type in matrix_types:
 
 
 def plot_mean_matrix_abundance_comparison2(matrix_type, sample_name, selected_indices, df_fingerprint):
-    matrix_file = f'../matrices/Matrix_{matrix_type}_srf.tsv'
+    matrix_file = f'{input_dir}/Matrix_{matrix_type}_srf.tsv'
     df = pd.read_csv(matrix_file, sep='\t', index_col=0)
     clr_df = clr_(df)  # centered-log-ratio normalization
 
@@ -388,7 +388,7 @@ sample_name = 'TSC013'
 
 selected_indices = ['TSC272', 'TSC065', 'TSC254', 'TSC013', 'TSC242', 'TSC216', 'TSC027', 'TSC135', 'TSC141', 'TSC167']
 
-df_fingerprint = pd.read_csv('../matrices/Matrix_outsource.tsv', sep='\t', index_col=0)
+df_fingerprint = pd.read_csv(f'{input_dir}/Matrix_outsource.tsv', sep='\t', index_col=0)
 
 for matrix_type in matrix_types:
     plot_mean_matrix_abundance_comparison2(matrix_type, sample_name, selected_indices, df_fingerprint)
@@ -400,7 +400,7 @@ for matrix_type in matrix_types:
 
 
 def plot_mean_matrix_abundance_comparison3(matrix_type, sample_name, selected_indices, df_fingerprint):
-    matrix_file = f'../matrices/Matrix_{matrix_type}_srf.tsv'
+    matrix_file = f'{input_dir}/Matrix_{matrix_type}_srf.tsv'
     df = pd.read_csv(matrix_file, sep='\t', index_col=0)
     clr_df = clr_(df)  # centered-log-ratio normalization
 
@@ -478,7 +478,7 @@ sample_name = 'TSC013'
 
 selected_indices = ['TSC272', 'TSC065', 'TSC254', 'TSC013', 'TSC242', 'TSC216', 'TSC027', 'TSC135', 'TSC141', 'TSC167']
 
-df_fingerprint = pd.read_csv('../matrices/Matrix_outsource.tsv', sep='\t', index_col=0)
+df_fingerprint = pd.read_csv(f'{input_dir}/Matrix_outsource.tsv', sep='\t', index_col=0)
 
 for matrix_type in matrix_types:
     plot_mean_matrix_abundance_comparison3(matrix_type, sample_name, selected_indices, df_fingerprint)
@@ -490,7 +490,7 @@ for matrix_type in matrix_types:
 
 
 def plot_env_bio(matrix_type, df_md, env_var, bio_var):
-    matrix_file = f'../matrices/Matrix_{matrix_type}_srf.tsv'
+    matrix_file = f'{input_dir}/Matrix_{matrix_type}_srf.tsv'
     df = pd.read_csv(matrix_file, sep='\t', index_col=0)
     
     if bio_var not in df.columns:
@@ -535,7 +535,7 @@ def plot_env_bio(matrix_type, df_md, env_var, bio_var):
 
 matrix_types = ['MX', 'M0', 'M1', 'guidi', 'salazar', 'stress']
 
-md = pd.read_csv('../matrices/metadata.tsv', sep='\t', index_col=0)
+md = pd.read_csv(f'{input_dir}/metadata.tsv', sep='\t', index_col=0)
 
 for matrix_type in matrix_types:
     plot_env_bio(matrix_type, md, 'Temperature', 'FabR')
