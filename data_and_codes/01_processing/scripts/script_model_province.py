@@ -33,6 +33,7 @@ from tqdm import tqdm
 # In[ ]:
 
 input_dir = '../../00_matrices'
+out_dir = '../../../out_results/out_xgb_models'
 filename = sys.argv[1]
 parts = filename.split('_')
 matrix_type = parts[1] if len(parts) > 1 else None
@@ -210,16 +211,16 @@ escenario_target = f'{matrix_type}_{subsample}_{target}'
 
 # Pickle the trained model
 model_filename = f'model_{escenario_target}.pkl'
-with open(model_filename, 'wb') as file:
+with open(f'{out_dir}/{model_filename}', 'wb') as file:
     pickle.dump(final_model, file)
 
 # Save best hyperparameters
 params_filename = f'best_hyperparameters_{escenario_target}.json'
-with open(params_filename, 'w') as file:
+with open(f'{out_dir}/metrics/{params_filename}', 'w') as file:
     json.dump(final_params, file)
 
 # Save evaluation metrics
 metrics_filename = f'evaluation_metrics_{escenario_target}.json'
-with open(metrics_filename, 'w') as file:
+with open(f'{out_dir}/metrics/{metrics_filename}', 'w') as file:
     json.dump({'Private Accuracy': private_accuracy, 'Private F1 Score': private_f1}, file)
 
