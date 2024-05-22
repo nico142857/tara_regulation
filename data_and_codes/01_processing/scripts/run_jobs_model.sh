@@ -6,7 +6,6 @@ script_map[srf]="script_model_temperature.py script_model_polar.py script_model_
 script_map[nonpolar]="script_model_layer.py script_model_layer2.py"
 script_map[epi-nonpolar]="script_model_npp.py script_model_no3.py script_model_cflux.py"
 
-# Define the files to process
 matrix_files=(
     "Matrix_MX_srf.tsv"
     "Matrix_M0_srf.tsv"
@@ -28,7 +27,6 @@ matrix_files=(
     "Matrix_stress_epi-nonpolar.tsv"
 )
 
-# Loop through the matrix files and submit jobs accordingly
 for matrix_file in "${matrix_files[@]}"; do
     # Extract the type from the file name
     if [[ $matrix_file == *"srf.tsv" ]]; then
