@@ -1,0 +1,9 @@
+	list_tfs
+stress -> Polar	MetR, HypR, PhnF, PurR, AcnR
+stress -> Temperature	NrdR, MetJ, PurR, AcnR, LexA
+stress -> Province	PurR, HutC, NtrC, MetR, HcpR
+stress -> Layer	BirA, CsoR, PdxR, MerR, LiuQ
+stress -> Layer2	CsoR, MerR, BirA, LiuQ, SiaR
+stress -> NO3	LtbR, GlcC, NmlR, NiaR, GulR
+stress -> CarbonFlux	BioQ, NtrC, SahR_SamR, CblR, LtbR
+stress -> NPP	AgaR, AmtR, NikR, LiuR, RutR
