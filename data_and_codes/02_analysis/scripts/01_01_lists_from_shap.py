@@ -15,14 +15,27 @@ for file in files:
     df = pd.read_csv(file, sep='\t', index_col=0)
     
     # Convert the features list into a comma-separated string
-    df['list_top_tfs'] = df.apply(lambda row: ', '.join(row.sort_values(ascending=False).index.tolist()[:5]), axis=1)
+    df['shap_top_tfs'] = df.apply(lambda row: ', '.join(row.sort_values(ascending=False).index.tolist()[:5]), axis=1)
     
     # Extract matrix_type and target_variable from the index
     df['matrix_type'] = df.index.map(lambda x: x.split(' -> ')[0])
     df['target_variable'] = df.index.map(lambda x: x.split(' -> ')[1])
     
+    # Define conditions for the 'subsample' column
+    conditions = [
+        df['target_variable'].isin(['Polar', 'Temperature', 'Province']),
+        df['target_variable'].isin(['Layer', 'Layer2']),
+        df['target_variable'].isin(['NO3', 'CarbonFlux', 'NPP'])
+    ]
+
+    # Define choices corresponding to each condition
+    choices = ['srf', 'nonpolar', 'epi-nonpolar']
+
+    # Create the 'subsample' column
+    df['subsample'] = np.select(conditions, choices, default='other')  # 'other' as default if none of the conditions are met
+
     # Select and order columns
-    ordered_df = df[['matrix_type', 'target_variable', 'list_top_tfs']]
+    ordered_df = df[['matrix_type','subsample', 'target_variable', 'shap_top_tfs']]
     
     # Append the ordered DataFrame to the list
     dfs.append(ordered_df)

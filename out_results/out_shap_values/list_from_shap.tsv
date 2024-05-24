@@ -1,49 +1,49 @@
-matrix_type	target_variable	list_top_tfs
-M0	Polar	AgaR, LiuR, KdgR, AraR, TyrR
-M0	Temperature	AgaR, HrcA, LexA, RbsR, PhnR
-M0	Province	AgaR, HypR, CadR-PbrR, NrdR, GguR
-M0	Layer	MetR, FnrN_FixK, ExuR_UxuR, FixJ, PdxR
-M0	Layer2	MetR, PaaR, NrtR, PdxR, GntR
-M0	NO3	BioQ, AmtR, NagR, NorR, NnrR
-M0	CarbonFlux	GlcC, ThiR, MntR, FadR, SdaR
-M0	NPP	NagC, FabR, NtrC, VanR, NorR
-M1	Polar	LexA, AgaR, CsoR, PrpR, PurR
-M1	Temperature	HrcA, LexA, AgaR, TrpR, LiuQ
-M1	Province	AgaR, LexA, LiuR, HypR, PhnF
-M1	Layer	BirA, KdgR, FnrN_FixK, VanR, FadP
-M1	Layer2	BirA, MerR, KdgR, LexA, GulR
-M1	NO3	CadR-PbrR, CzrA, PhsR, TyrR, NmlR
-M1	CarbonFlux	PdhR, Irr, GulR, NmlR, PaaR
-M1	NPP	NagC, VanR, GlcC, FnrN_FixK, ThiR
-stress	Polar	MetR, HypR, PhnF, PurR, AcnR
-stress	Temperature	NrdR, MetJ, PurR, AcnR, LexA
-stress	Province	PurR, HutC, NtrC, MetR, HcpR
-stress	Layer	BirA, CsoR, PdxR, MerR, LiuQ
-stress	Layer2	CsoR, MerR, BirA, LiuQ, SiaR
-stress	NO3	LtbR, GlcC, NmlR, NiaR, GulR
-stress	CarbonFlux	BioQ, NtrC, SahR_SamR, CblR, LtbR
-stress	NPP	AgaR, AmtR, NikR, LiuR, RutR
-guidi	Polar	SahR_SamR, GguR, Zur, TrpR, SoxR
-guidi	Temperature	SahR_SamR, FUR, TyrR, PhnF, PdxR
-guidi	Province	SahR_SamR, PhnF, KdgR, TyrR, GguR
-guidi	Layer	NagC, PhnF, ArgR, NrtR, PdxR
-guidi	Layer2	ArgR, FixJ, NifA, NrtR, PhnF
-guidi	NO3	ZntR, FadP, HypR, NmlR, LldR
-guidi	CarbonFlux	TyrR, AmtR, SahR_SamR, NnrR, PdhR
-guidi	NPP	FabR, FadR, FixJ, MerR, NsrR
-salazar	Polar	LiuQ, TyrR, Irr, BirA, NtrC
-salazar	Temperature	Irr, AgaR, NagQ, NmlR, CcpA
-salazar	Province	FabR, FadR, AgaR, PsrA, PurR
-salazar	Layer	LiuQ, AcnR, KdgR, NmlR, NifA
-salazar	Layer2	KdgR, NifA, AcnR, Irr, CadR-PbrR
-salazar	NO3	FabR, PaaR, PhnR, NorR, BioQ
-salazar	CarbonFlux	Phr, AraR, CueR, PurR, NagQ
-salazar	NPP	NadQ, LtbR, NmlR, HypR, NnrR
-MX	Polar	PurR, AgaR, VanR, FadR, QorR
-MX	Temperature	AgaR, PurR, FabR, LiuQ, SdaR
-MX	Province	AgaR, ExuR_UxuR, FabR, PurR, TrpR
-MX	Layer	GlcC, CadR-PbrR, FadR, PhnR, NrdR
-MX	Layer2	GlcC, PaaR, GntR, FadR, TtrR
-MX	NO3	DasR, MetJ, PhsR, VanR, BioQ
-MX	CarbonFlux	TrpR, AmtR, TtrR, IscR, LexA
-MX	NPP	MetR, PurR, NsrR, LiuQ, GlcC
+matrix_type	subsample	target_variable	shap_top_tfs
+M0	srf	Polar	AgaR, LiuR, KdgR, AraR, TyrR
+M0	srf	Temperature	AgaR, HrcA, LexA, RbsR, PhnR
+M0	srf	Province	AgaR, HypR, CadR-PbrR, NrdR, GguR
+M0	nonpolar	Layer	MetR, FnrN_FixK, ExuR_UxuR, FixJ, PdxR
+M0	nonpolar	Layer2	MetR, PaaR, NrtR, PdxR, GntR
+M0	epi-nonpolar	NO3	BioQ, AmtR, NagR, NorR, NnrR
+M0	epi-nonpolar	CarbonFlux	GlcC, ThiR, MntR, FadR, SdaR
+M0	epi-nonpolar	NPP	NagC, FabR, NtrC, VanR, NorR
+M1	srf	Polar	LexA, AgaR, CsoR, PrpR, PurR
+M1	srf	Temperature	HrcA, LexA, AgaR, TrpR, LiuQ
+M1	srf	Province	AgaR, LexA, LiuR, HypR, PhnF
+M1	nonpolar	Layer	BirA, KdgR, FnrN_FixK, VanR, FadP
+M1	nonpolar	Layer2	BirA, MerR, KdgR, LexA, GulR
+M1	epi-nonpolar	NO3	CadR-PbrR, CzrA, PhsR, TyrR, NmlR
+M1	epi-nonpolar	CarbonFlux	PdhR, Irr, GulR, NmlR, PaaR
+M1	epi-nonpolar	NPP	NagC, VanR, GlcC, FnrN_FixK, ThiR
+stress	srf	Polar	MetR, HypR, PhnF, PurR, AcnR
+stress	srf	Temperature	NrdR, MetJ, PurR, AcnR, LexA
+stress	srf	Province	PurR, HutC, NtrC, MetR, HcpR
+stress	nonpolar	Layer	BirA, CsoR, PdxR, MerR, LiuQ
+stress	nonpolar	Layer2	CsoR, MerR, BirA, LiuQ, SiaR
+stress	epi-nonpolar	NO3	LtbR, GlcC, NmlR, NiaR, GulR
+stress	epi-nonpolar	CarbonFlux	BioQ, NtrC, SahR_SamR, CblR, LtbR
+stress	epi-nonpolar	NPP	AgaR, AmtR, NikR, LiuR, RutR
+guidi	srf	Polar	SahR_SamR, GguR, Zur, TrpR, SoxR
+guidi	srf	Temperature	SahR_SamR, FUR, TyrR, PhnF, PdxR
+guidi	srf	Province	SahR_SamR, PhnF, KdgR, TyrR, GguR
+guidi	nonpolar	Layer	NagC, PhnF, ArgR, NrtR, PdxR
+guidi	nonpolar	Layer2	ArgR, FixJ, NifA, NrtR, PhnF
+guidi	epi-nonpolar	NO3	ZntR, FadP, HypR, NmlR, LldR
+guidi	epi-nonpolar	CarbonFlux	TyrR, AmtR, SahR_SamR, NnrR, PdhR
+guidi	epi-nonpolar	NPP	FabR, FadR, FixJ, MerR, NsrR
+salazar	srf	Polar	LiuQ, TyrR, Irr, BirA, NtrC
+salazar	srf	Temperature	Irr, AgaR, NagQ, NmlR, CcpA
+salazar	srf	Province	FabR, FadR, AgaR, PsrA, PurR
+salazar	nonpolar	Layer	LiuQ, AcnR, KdgR, NmlR, NifA
+salazar	nonpolar	Layer2	KdgR, NifA, AcnR, Irr, CadR-PbrR
+salazar	epi-nonpolar	NO3	FabR, PaaR, PhnR, NorR, BioQ
+salazar	epi-nonpolar	CarbonFlux	Phr, AraR, CueR, PurR, NagQ
+salazar	epi-nonpolar	NPP	NadQ, LtbR, NmlR, HypR, NnrR
+MX	srf	Polar	PurR, AgaR, VanR, FadR, QorR
+MX	srf	Temperature	AgaR, PurR, FabR, LiuQ, SdaR
+MX	srf	Province	AgaR, ExuR_UxuR, FabR, PurR, TrpR
+MX	nonpolar	Layer	GlcC, CadR-PbrR, FadR, PhnR, NrdR
+MX	nonpolar	Layer2	GlcC, PaaR, GntR, FadR, TtrR
+MX	epi-nonpolar	NO3	DasR, MetJ, PhsR, VanR, BioQ
+MX	epi-nonpolar	CarbonFlux	TrpR, AmtR, TtrR, IscR, LexA
+MX	epi-nonpolar	NPP	MetR, PurR, NsrR, LiuQ, GlcC
