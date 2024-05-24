@@ -14,7 +14,7 @@ from xgboost import XGBClassifier
 
 from sklearn.model_selection import train_test_split, cross_val_score, RepeatedStratifiedKFold
 from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, accuracy_score, recall_score, precision_score, roc_auc_score
 
 from tqdm import tqdm
 
@@ -112,13 +112,13 @@ label_encoder = LabelEncoder()
 for matrix_name in tqdm(matrices, desc='Processing matrices'):
     matrix = pd.read_csv(f'../../00_matrices/{matrix_name}.tsv', sep='\t', index_col=0)
     matrix = clr_(matrix)  # Apply clr transformation
-    
+
     for variable in tqdm(variables, desc=f'Variables in {matrix_name}', leave=False):
         X = matrix
         y = label_encoder.fit_transform(md[variable])  # Encode labels
-         
-        # Store f1 scores for each cycle
-        f1_scores = []
+
+        # Store scores for each cycle
+        scores = []
 
         for cycle in tqdm(range(num_cycles), desc='Simulation cycles', leave=False):
             # Split the data into training and testing sets with a different random state each time
@@ -130,22 +130,29 @@ for matrix_name in tqdm(matrices, desc='Processing matrices'):
 
             # Evaluate the model
             y_pred = model.predict(X_test)
-            score = f1_score(y_test, y_pred, average='weighted')
-            f1_scores.append(score)
 
-        # Compute average F1 score over all cycles
-        avg_f1_score = np.mean(f1_scores)
-        results.append(('_'.join(matrix_name.split('_')[1:]), variable, avg_f1_score))
+            # Calculate metrics
+            scores.append({
+                'f1': f1_score(y_test, y_pred, average='weighted'),
+                'accuracy': accuracy_score(y_test, y_pred),
+                'recall': recall_score(y_test, y_pred, average='weighted'),
+                'precision': precision_score(y_test, y_pred, average='weighted')
+            })
 
-# Filename
+        # Compute average scores over all cycles
+        avg_scores = {key: np.mean([score[key] for score in scores]) for key in scores[0]}
+        results.append({'matrix_type': '_'.join(matrix_name.split('_')[1:]), 'variable': variable, **avg_scores})
+
+# Save results
 output_file = 'initial_prediction_tf_vs_gen'
-# Directory
 out_dir = '../../../out_results/out_initial_predictions/'
-        
-df_results = pd.DataFrame(results, columns=['matrix_type', 'target_variable', 'f1_score'])
-df_results.to_csv(out_dir+output_file+'.tsv', sep='\t', index=False)
+
+df_results = pd.DataFrame(results)
+df_results.to_csv(f'{out_dir}{output_file}.tsv', sep='\t', index=False)
 
 # Display the results
 for result in results:
-    print(f'Matrix: {result[0]}, Variable: {result[1]}, Average F1 Score over {num_cycles} cycles: {result[2]:.4f}')
+    print(f"Matrix: {result['matrix_type']}, Variable: {result['variable']}, "
+          f"Average F1 Score: {result['f1']:.4f}, Accuracy: {result['accuracy']:.4f}, "
+          f"Recall: {result['recall']:.4f}, Precision: {result['precision']:.4f} over {num_cycles} cycles")
 
