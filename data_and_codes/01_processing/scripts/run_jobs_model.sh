@@ -45,6 +45,6 @@ for matrix_file in "${matrix_files[@]}"; do
 
     # Submit the job for each script
     for script in $scripts; do
-        sbatch standar.sh $script $matrix_file
+        sbatch standar_models.sh $script $matrix_file
     done
 done

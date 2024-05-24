@@ -12,7 +12,4 @@
 
 # command line process down here.
 
-script=$1
-matrix_file=$2
-
-python $script $matrix_file
+python initial_prediction_tfs_genes.py
