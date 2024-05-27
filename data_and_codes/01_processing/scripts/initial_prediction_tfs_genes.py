@@ -115,8 +115,9 @@ for matrix_name in tqdm(matrices, desc='Processing matrices'):
     matrix = clr_(matrix)  # Apply clr transformation
 
     for variable in tqdm(variables, desc=f'Variables in {matrix_name}', leave=False):
-        X = matrix
-        y = label_encoder.fit_transform(md[variable])  # Encode labels
+        valid_indices = md[variable].dropna().index
+        X = matrix.loc[valid_indices]
+        y = label_encoder.fit_transform(md.loc[valid_indices, variable]) # Encode labels
 
         # Store scores for each cycle
         scores = []
@@ -147,7 +148,7 @@ for matrix_name in tqdm(matrices, desc='Processing matrices'):
 # Save results
 output_file = 'initial_prediction_tf_vs_gen'
 out_dir = '../../../out_results/out_initial_predictions/'
-os.makedirs(output_dir, exist_ok=True)
+os.makedirs(out_dir, exist_ok=True)
 
 df_results = pd.DataFrame(results)
 df_results.to_csv(f'{out_dir}{output_file}.tsv', sep='\t', index=False)
