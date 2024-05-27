@@ -4,3 +4,9 @@
 	- correlation_clustermap_bio.py: Computes the auto-correlation between TFs and reorders the labels using hierarchical clustering for improved readability.
 	- correlation_heatmap_bio_env.py: Computes the correlation between TF abundance and non-categorical environmental variables.
 - 'initial_prediction_tfs_genes.py': This script performs clr normalization on different matrix types (MX, M0, M1, guidi, salazar, stress) for both TFs and Genes, then trains and evaluates XGBoost classification models to predict various binned environmental variables, outputting the results as average F1 scores over multiple simulation cycles (n=100). This is the first approach to evaluate the capacity of transcription factors and genes to predict the environment and also comparing their results.
+- 'script_model_*.py': A collection of scripts designed to optimize the parameters of XGBoost models with the objective of maximizing the F1-score. These scripts fit a final XGBoost model with the optimized parameters using TF abundance as predictors and the specified environmental variable as the target (indicated in the script name) using a public/private samples approach [1]. For example:
+	- 'script_model_polar': Reads the input matrix provided by the user and searches for the best hyperparameters (n_estimators, max_depth, min_child_weight, learning_rate, subsample, gamma, reg_lambda) that maximize the F1-score using a repeated cross-validation approach. Finally, it fits an XGBoost model using the optimized hyperparameters, with TF abundance as predictors and the polar/non-polar classification as the target variable on the public samples.
+
+
+
+	[1] To optimize the parameters, equally distributed samples for each target variable class are selected and excluded from the list of samples; these are denoted as "private samples," while the remaining are referred to as "public samples."
