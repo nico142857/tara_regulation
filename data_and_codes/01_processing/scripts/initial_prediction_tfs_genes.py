@@ -123,7 +123,7 @@ for matrix_name in tqdm(matrices, desc='Processing matrices'):
 
         for cycle in tqdm(range(num_cycles), desc='Simulation cycles', leave=False):
             # Split the data into training and testing sets with a different random state each time
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=cycle, stratify=y)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=cycle, stratify=y)
 
             # Create and train the model
             model = XGBClassifier(n_estimators=250)
