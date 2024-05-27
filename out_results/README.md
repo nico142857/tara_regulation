@@ -9,4 +9,24 @@ It includes a series of detailed plots and visualizations representing centered 
 - Scatter plots that correlate abundances between different samples, such as those from Tara Oceans and human gut samples.
 - Annotations of correlation coefficients and linear regression equations, providing clear statistical interpretation. 
 
+### out_correlation
+It contains heatmaps, clustermaps, and networks of correlation between the variables involved in this study: TFs abundance matrices and environmental data collected by Tara.
+
 ### out_initial_predictions
+It contains initial exploratory results aimed at investigating the capacity of transcription factors (TFs) to sense the environment
+
+### out_xgb_models
+contains XGBoost classification models designed to classify various environmental variables using transcription factor (TF) abundances as predictors. The classifications include:
+- polar / non polar | on surface samples
+- Temperature (Low <=10°C, Mid 10-22°C, High >22°C) | on surface samples
+- Province (Fremont et. al. 2022) | on surface samples
+- Layer (Surface, DCM, Mesopelagic) | on non polar samples
+- Layer2 (Epipelagic, Mesopelagic) | on non polar samples
+- NO3 (Low <=7, High > 7) | on epipelagic-non polar samples
+- CarbonExport Mean Flux at 150m (Low <=0.7, Mid 0.7-3, High >3) | on epipelagic-non polar samples
+- NPP (Low <=275, Mid 275-540, High >540) | on epipelagic-non polar samples
+The hyperparameters for the XGBoost models were optimized using a tree-based algorithm from the 'Hyperopt' library. A public-private dataset approach was employed for final validation. Classification reports are included in this folder.
+
+### out_shap_values
+
+### out_reg_genes
