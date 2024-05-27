@@ -33,6 +33,8 @@ def clr_(data, eps=1e-6):
 input_dir = '../../00_matrices'
 output_dir = '../../../out_results/out_correlation/correlation_bio_env'
 
+os.makedirs(output_dir, exist_ok=True)
+
 md = pd.read_csv(f'{input_dir}/metadata.tsv', sep='\t', index_col=0)
 
 categorical_cols = ['PANGAEA sample id', 'Station.label', 'lower.size.fraction','upper.size.fraction','Event.date',
