@@ -1,2 +1,6 @@
 - 'Ocean_fingerprint': This script is designed to analyze and visualize clr (centered log-ratio) normalized abundance of transcription factors (TFs) for different matrix types (MX, M0, M1, guidi, salazar, stress) and different metagenomic sources (Tara Oceans, Human Gut, Lake Water and Farmland Soil).
+- 'correlation_*': A collection of scripts to compute correlations between the variables used in this study:
+	- correlation_heatmap_bio.py: Computes the auto-correlation between transcription factors (TFs).
+	- correlation_clustermap_bio.py: Computes the auto-correlation between TFs and reorders the labels using hierarchical clustering for improved readability.
+	- correlation_heatmap_bio_env.py: Computes the correlation between TF abundance and non-categorical environmental variables.
 - 'initial_prediction_tfs_genes.py': This script performs clr normalization on different matrix types (MX, M0, M1, guidi, salazar, stress) for both TFs and Genes, then trains and evaluates XGBoost classification models to predict various binned environmental variables, outputting the results as average F1 scores over multiple simulation cycles (n=100). This is the first approach to evaluate the capacity of transcription factors and genes to predict the environment and also comparing their results.
