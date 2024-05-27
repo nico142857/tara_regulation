@@ -7,6 +7,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
 
 import seaborn as sns
 
@@ -146,6 +147,7 @@ for matrix_name in tqdm(matrices, desc='Processing matrices'):
 # Save results
 output_file = 'initial_prediction_tf_vs_gen'
 out_dir = '../../../out_results/out_initial_predictions/'
+os.makedirs(output_dir, exist_ok=True)
 
 df_results = pd.DataFrame(results)
 df_results.to_csv(f'{out_dir}{output_file}.tsv', sep='\t', index=False)
