@@ -126,20 +126,29 @@ private_list = ['TSC021', # TARA_031 SRF
 
 clr_df = clr_(df)
 aligned_md = md_encoded.loc[clr_df.index]  # Align the target metadata with the current dataframe's indices
-aligned_md['NPP_bins'] = aligned_md['NPP 8d VGPM (mgC/m2/day)'].apply(lambda temp: 0 if temp < 275 else (1 if temp <= 540 else 2))
-y_total = aligned_md['NPP_bins']
+
+# Create the target variable
+continuous_y = aligned_md['NPP 8d VGPM (mgC/m2/day)'].copy()
+
+# Drop NaN values from continuous_y and corresponding rows in clr_df
+valid_indices = continuous_y.dropna().index
+continuous_y = continuous_y.loc[valid_indices]
+clr_df = clr_df.loc[valid_indices]
+
+# Bin the NPP to obtain a binary target variable
+y_total = continuous_y.apply(lambda temp: 0 if temp < 275 else (1 if temp <= 540 else 2))
 
 # Exclude the private list from training data
-X = clr_df.drop(private_list)
-y = y_total.drop(private_list)
+X = clr_df.drop(private_list, errors='ignore')
+y = y_total.drop(private_list, errors='ignore')
 
 #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42, stratify=y)
 
 # Define parameter space
 space = {
-    'n_estimators': hp.quniform('n_estimators', 100, 350, 25),
-    'max_depth': hp.quniform('max_depth', 3, 6, 1),
-    'min_child_weight': hp.quniform('min_child_weight', 1, 6, 1),
+    'n_estimators': hp.quniform('n_estimators', 50, 100, 200, 350),
+    'max_depth': hp.quniform('max_depth', 2, 3, 6),
+    'min_child_weight': hp.quniform('min_child_weight', 1, 3, 6),
     'learning_rate': hp.loguniform('learning_rate', -5, -2),
     'subsample': hp.uniform('subsample', 0.75, 1),
     'gamma': hp.uniform('gamma', 0.0, 3.0),
