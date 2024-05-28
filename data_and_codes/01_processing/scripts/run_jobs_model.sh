@@ -1,4 +1,4 @@
-# Define the mapping between file types and scripts
+# Define the mapping between file types and script
 declare -A script_map
 script_map[srf]="script_model_temperature.py script_model_polar.py script_model_province.py"
 script_map[nonpolar]="script_model_layer.py script_model_layer2.py"
