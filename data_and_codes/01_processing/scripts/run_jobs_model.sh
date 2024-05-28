@@ -25,6 +25,8 @@ matrix_files=(
     "Matrix_stress_epi-nonpolar.tsv"
 )
 
+total_jobs=0
+
 for matrix_file in "${matrix_files[@]}"; do
     # Extract the type from the file name
     if [[ $matrix_file == *"srf.tsv" ]]; then
@@ -43,6 +45,10 @@ for matrix_file in "${matrix_files[@]}"; do
 
     # Submit the job for each script
     for script in $scripts; do
+        echo "Submitting job for script: $script with matrix file: $matrix_file"
         sbatch standar_models.sh "$script" "$matrix_file"
+        total_jobs=$((total_jobs + 1))
     done
 done
+
+echo "Total jobs submitted: $total_jobs"
