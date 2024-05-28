@@ -133,7 +133,7 @@ continuous_y = continuous_y.loc[valid_indices]
 clr_df = clr_df.loc[valid_indices]
 
 # Bin the CarbonExport to obtain a binary target variable
-y_total = continuous_y['Mean Flux at 150m'].apply(lambda temp: 0 if temp < 0.7 else (1 if temp <= 3 else 2))
+y_total = continuous_y.apply(lambda temp: 0 if temp < 0.7 else (1 if temp <= 3 else 2))
 
 # Exclude the private list from training data
 X = clr_df.drop(private_list, errors='ignore')
@@ -143,9 +143,9 @@ y = y_total.drop(private_list, errors='ignore')
 
 # Define parameter space
 space = {
-    'n_estimators': hp.quniform('n_estimators', 50, 100, 200, 350),
-    'max_depth': hp.quniform('max_depth', 2, 3, 6),
-    'min_child_weight': hp.quniform('min_child_weight', 1, 3, 6),
+    'n_estimators': hp.quniform('n_estimators', 100, 350, 50),
+    'max_depth': hp.quniform('max_depth', 3, 6, 1),
+    'min_child_weight': hp.quniform('min_child_weight', 1, 6, 1),
     'learning_rate': hp.loguniform('learning_rate', -5, -2),
     'subsample': hp.uniform('subsample', 0.75, 1),
     'gamma': hp.uniform('gamma', 0.0, 3.0),
