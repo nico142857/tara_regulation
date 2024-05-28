@@ -29,7 +29,7 @@ total_jobs=0
 
 for matrix_file in "${matrix_files[@]}"; do
     # Extract the type from the file name
-    if [[ $matrix_file == *"srf.tsv" ]]; then
+    if [[ $matrix_file == *"_srf.tsv" ]]; then
         matrix_type="srf"
     elif [[ $matrix_file == *"_nonpolar.tsv" ]]; then
         matrix_type="nonpolar"
