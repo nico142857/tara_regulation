@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=Job
 #SBATCH --partition=largemem
-#SBATCH --output=logs7/out.%a.%N.%j.out
-#SBATCH --error=logs7/out.%a.%N.%j.err
+#SBATCH --output=logs_initial_predictions/out.%a.%N.%j.out
+#SBATCH --error=logs_initial_predictions/out.%a.%N.%j.err
 ##SBATCH --mail-user=
 ##SBATCH --mail-type=ALL
 #SBATCH -n 1 # number of jobs
