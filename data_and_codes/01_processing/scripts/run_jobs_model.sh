@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # Define the mapping between file types and scripts
 declare -A script_map
 script_map[srf]="script_model_temperature.py script_model_polar.py script_model_province.py"
@@ -45,6 +43,6 @@ for matrix_file in "${matrix_files[@]}"; do
 
     # Submit the job for each script
     for script in $scripts; do
-        sbatch standar_models.sh $script $matrix_file
+        sbatch standar_models.sh "$script" "$matrix_file"
     done
 done
