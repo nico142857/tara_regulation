@@ -111,7 +111,7 @@ def shap_polar_(matrix_type):
     with open(f'{input_dir_models}/{filename}.pkl', 'rb') as file:
         model = pickle.load(file)
     
-    # Compute centered log ratio transformation, assuming the function clr_ is predefined
+    # clr normalization
     clr_df = clr_(df)
     aligned_md = md_encoded.loc[clr_df.index]  # Align the target metadata with the current dataframe's indices
     y_total = aligned_md['polar']  # POLAR (0/1)
@@ -185,12 +185,19 @@ def shap_temperature_(matrix_type):
     with open(f'{input_dir_models}/{filename}.pkl', 'rb') as file:
         model = pickle.load(file)
     
-    # Compute centered log ratio transformation, assuming the function clr_ is predefined
+    # clr normalization
     clr_df = clr_(df)
     aligned_md = md_encoded.loc[clr_df.index]  # Align the target metadata with the current dataframe's indices
-    # Create the target variable for the entire dataset of the biological samples' index
+
+    # Create the target variable
     continuous_y = aligned_md['Temperature'].copy()
-    #y_total = pd.qcut(continuous_y, 3, labels=False)
+
+    # Drop NaN values from continuous_y and corresponding rows in clr_df
+    valid_indices = continuous_y.dropna().index
+    continuous_y = continuous_y.loc[valid_indices]
+    clr_df = clr_df.loc[valid_indices]
+
+    # Bin the Temperature to obtain a binary target variable
     y_total = continuous_y.apply(lambda temp: 0 if temp < 10 else (1 if temp <= 22 else 2))
     
     # SHAP analysis
@@ -265,7 +272,7 @@ def shap_province_(matrix_type):
     with open(f'{input_dir_models}/{filename}.pkl', 'rb') as file:
         model = pickle.load(file)
     
-    # Compute centered log ratio transformation, assuming the function clr_ is predefined
+    # clr normalization
     clr_df = clr_(df)
     aligned_md = md_encoded.loc[clr_df.index]  # Align the target metadata with the current dataframe's indices
     y_total = aligned_md['Province']
@@ -367,7 +374,7 @@ def shap_layer_(matrix_type):
     with open(f'{input_dir_models}/{filename}.pkl', 'rb') as file:
         model = pickle.load(file)
     
-    # Compute centered log ratio transformation, assuming the function clr_ is predefined
+    # clr normalization
     clr_df = clr_(df)
     aligned_md = md_encoded.loc[clr_df.index]  # Align the target metadata with the current dataframe's indices
     y_total = aligned_md['Layer']
@@ -465,7 +472,7 @@ def shap_layer2_(matrix_type):
     with open(f'{input_dir_models}/{filename}.pkl', 'rb') as file:
         model = pickle.load(file)
     
-    # Compute centered log ratio transformation, assuming the function clr_ is predefined
+    # clr normalization
     clr_df = clr_(df)
     aligned_md = md_encoded.loc[clr_df.index]  # Align the target metadata with the current dataframe's indices
     y_total = aligned_md['Layer2']
@@ -537,15 +544,24 @@ def shap_no3_(matrix_type):
     with open(f'{input_dir_models}/{filename}.pkl', 'rb') as file:
         model = pickle.load(file)
     
-    # Compute centered log ratio transformation, assuming the function clr_ is predefined
+    # clr normalization
     clr_df = clr_(df)
     aligned_md = md_encoded.loc[clr_df.index]
-    aligned_md['NO3_bins'] = aligned_md['NO3'].apply(lambda temp: 0 if temp <= 7 else 1)
-    y_total = aligned_md['NO3_bins']
+
+    # Create the target variable
+    continuous_y = aligned_md['NO3'].copy()
+
+    # Drop NaN values from continuous_y and corresponding rows in clr_df
+    valid_indices = continuous_y.dropna().index
+    continuous_y = continuous_y.loc[valid_indices]
+    clr_df = clr_df.loc[valid_indices]
+
+    # Bin the NO3 to obtain a binary target variable
+    y_total = continuous_y.apply(lambda temp: 0 if temp < 7 else 1)
     
     # SHAP analysis
     explainer = shap.TreeExplainer(model)
-    shap_values = explainer.shap_values(clr_df.loc[private_list])  # clr_df.loc[private_list] should be your feature matrix
+    shap_values = explainer.shap_values(clr_df.loc[private_list])  # clr_df.loc[private_list] is the predictor (abundance of TFs)
     
     no3_bin_labels = {
     0: 'Class <=7 NO3',
@@ -623,11 +639,20 @@ def shap_npp_(matrix_type):
     with open(f'{input_dir_models}/{filename}.pkl', 'rb') as file:
         model = pickle.load(file)
     
-    # Compute centered log ratio transformation, assuming the function clr_ is predefined
+    # clr normalization
     clr_df = clr_(df)
     aligned_md = md_encoded.loc[clr_df.index]  # Align the target metadata with the current dataframe's indices
-    aligned_md['NPP_bins'] = aligned_md['NPP 8d VGPM (mgC/m2/day)'].apply(lambda temp: 0 if temp < 275 else (1 if temp <= 540 else 2))
-    y_total = aligned_md['NPP_bins']
+
+    # Create the target variable
+    continuous_y = aligned_md['NPP 8d VGPM (mgC/m2/day)'].copy()
+
+    # Drop NaN values from continuous_y and corresponding rows in clr_df
+    valid_indices = continuous_y.dropna().index
+    continuous_y = continuous_y.loc[valid_indices]
+    clr_df = clr_df.loc[valid_indices]
+
+    # Bin the NPP to obtain a binary target variable
+    y_total = continuous_y.apply(lambda temp: 0 if temp < 275 else (1 if temp <= 540 else 2))
     
     # SHAP analysis
     explainer = shap.TreeExplainer(model)
@@ -707,11 +732,20 @@ def shap_cflux_(matrix_type):
     with open(f'{input_dir_models}/{filename}.pkl', 'rb') as file:
         model = pickle.load(file)
     
-    
-    clr_df = clr_(df) # Compute centered log ratio transformation
+    # clr normalization
+    clr_df = clr_(df)
     aligned_md = md_encoded.loc[clr_df.index]
-    aligned_md['Cflux_bins'] = aligned_md['Mean Flux at 150m'].apply(lambda temp: 0 if temp < 0.7 else (1 if temp <= 3 else 2))
-    y_total = aligned_md['Cflux_bins']
+
+    # Create the target variable
+    continuous_y = aligned_md['Mean Flux at 150m'].copy()
+
+    # Drop NaN values from continuous_y and corresponding rows in clr_df
+    valid_indices = continuous_y.dropna().index
+    continuous_y = continuous_y.loc[valid_indices]
+    clr_df = clr_df.loc[valid_indices]
+
+    # Bin the CarbonExport to obtain a binary target variable
+    y_total = continuous_y.apply(lambda temp: 0 if temp < 0.7 else (1 if temp <= 3 else 2))
     
     # SHAP analysis
     explainer = shap.TreeExplainer(model)
@@ -842,10 +876,7 @@ def plot_shap_clustermap(matrix_type, data_tests, feature_subset):
 
 
 df = pd.read_csv(f'{input_dir_matrices}/Matrix_MX_all.tsv', sep='\t', index_col=[0])
-feature_subset = df.columns  # This should be adjusted if different matrix types have different features
+feature_subset = df.columns  # All the matrices have the same features
 
 for matrix_type in matrix_types:
     plot_shap_clustermap(matrix_type, data_tests, feature_subset)
-
-
-
