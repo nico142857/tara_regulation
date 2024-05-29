@@ -19,6 +19,7 @@ column_mapping = {
 }
 
 threshold = 0.5
+threshold_str = f"{int(threshold * 100):02d}"
 
 # Iterate over each row in the DataFrame
 for index, row in shap_correlated_df.iterrows():
@@ -51,5 +52,5 @@ for index, row in shap_correlated_df.iterrows():
     top_tfs_correlated_lists.append(lista)
 
 # Save the updated DataFrame to a TSV file
-shap_correlated_df[f'top_tfs_correlated(>{threshold})'] = top_tfs_correlated_lists
+shap_correlated_df[f'top_tfs_correlated_{threshold_str}'] = top_tfs_correlated_lists
 shap_correlated_df.to_csv(output_file_path, sep='\t', index=False)
