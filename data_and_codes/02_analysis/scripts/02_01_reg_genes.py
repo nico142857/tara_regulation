@@ -47,8 +47,8 @@ def write_results_to_file(results, filename):
 # Example of how to process one of the columns
 results_shap_top_tfs = process_tfs('shap_top_tfs')
 results_shap_top_tfs_correlated = process_tfs('shap_top_tfs_correlated')
-results_top_tfs_correlated = process_tfs('top_tfs_correlated(>0.5)')
+results_top_tfs_correlated = process_tfs('top_tfs_correlated_05')
 
 write_results_to_file(results_shap_top_tfs, 'results_shap_top_tfs.txt')
 write_results_to_file(results_shap_top_tfs_correlated, 'results_shap_top_tfs_correlated.txt')
-write_results_to_file(results_top_tfs_correlated, 'results_top_tfs_correlated(>0.5).txt')
+write_results_to_file(results_top_tfs_correlated, 'results_top_tfs_correlated_05.txt')
