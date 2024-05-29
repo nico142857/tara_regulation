@@ -19,7 +19,7 @@ column_mapping = {
 }
 
 threshold = 0.5
-threshold_str = f"{int(threshold * 100):02d}"
+threshold_str = f"{int(threshold * 10):02d}"
 
 # Iterate over each row in the DataFrame
 for index, row in shap_correlated_df.iterrows():
