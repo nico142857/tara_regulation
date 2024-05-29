@@ -1,4 +1,4 @@
-matrix_type	subsample	target_variable	shap_top_tfs	shap_top_tfs_correlated	top_tfs_correlated(>0.5)
+matrix_type	subsample	target_variable	shap_top_tfs	shap_top_tfs_correlated	top_tfs_correlated_50
 M0	srf	Polar	AgaR, LiuR, KdgR, AraR, CsoR	AgaR, SahR_SamR, NtrC, FUR, NagC, NnrR, LiuR, SahR_SamR, AgaR, MetR, NagC, FUR, KdgR, NagC, FUR, ThiR, MetR, NrtR, AraR, CzrA, Zur, SahR_SamR, NsrR, ArgR, CsoR, AgaR, FUR, NnrR, CzrA, CueR	
 M0	srf	Temperature	AgaR, HrcA, LexA, RbsR, PhnR	AgaR, SahR_SamR, NtrC, FUR, NagC, NnrR, HrcA, NtrC, KdgR, MetR, SahR_SamR, NnrR, LexA, LiuR, GguR, FabR, SoxR, NarP, RbsR, CzrA, Phr, NsrR, NrtR, IscR, PhnR, NadQ, MerR, PdhR, AcnR, NagC	AgaR, CsoR, FUR, FabR, GguR, GntR, GulR, HrcA, KdgR, LiuR, MetR, NagC, NnrR, NtrC, RbkR, SahR_SamR, ThiR
 M0	srf	Province	AgaR, HypR, CadR-PbrR, GguR, NrdR	AgaR, SahR_SamR, NtrC, FUR, NagC, NnrR, HypR, FabR, PsrA, GlcC, TtrR, LtbR, CadR-PbrR, LiuQ, FixJ, HutC, GlcC, TrpR, GguR, LiuR, AgaR, FabR, NtrC, NnrR, NrdR, LldR, BioQ, NagR, NsrR, Zur	
