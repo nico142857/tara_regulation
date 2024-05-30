@@ -18,13 +18,19 @@ for filename in os.listdir(input_dir):
     if filename.endswith(".tsv") and 'heatmap' in filename:
         filepath = os.path.join(input_dir, filename)
         df = pd.read_csv(filepath, sep='\t', index_col=0)
-        # Calculate the absolute sums of each column
+        
+        # Calculate the absolute sums of each column to determine the top 5 columns
         abs_sums = df.abs().sum()
-        sorted_columns = abs_sums.sort_values(ascending=False).index # Sort values
-        top_5_columns = sorted_columns[:5].tolist() # Get the top 5 correlated columns
-        top_5_max_values = [df[col].max() for col in top_5_columns]  # Get max value from each column
-        # Format column names with max values
-        top_5_columns_with_values = [f"{col} (max: {max_val:.2f})" for col, max_val in zip(top_5_columns, top_5_max_values)]
+        sorted_columns = abs_sums.sort_values(ascending=False).index[:5]  # Get the top 5 correlated column names
+        
+        top_5_info = []
+        for col in sorted_columns:
+            max_val = df[col].max()  # Maximum correlation value
+            # Compute the average of the top 15 most correlated rows by absolute value
+            avg_top_15 = df[col].abs().nlargest(15).mean()
+            
+            # Format column data with max and average values
+            top_5_info.append(f"{col} (max: {max_val:.2f}, avg15: {avg_top_15:.2f})")
         
         # Extract matrix and subsample identifiers from the filename
         parts = filename.split('_')
@@ -33,9 +39,11 @@ for filename in os.listdir(input_dir):
         
         # Append the results to the summary data list
         matrix_subsample = f"{matrix}_{subsample}"
-        summary_data.append([matrix_subsample] + top_5_columns_with_values)
+        summary_data.append([matrix_subsample] + top_5_info)
 
-# Summary data to DataFrame
-summary_df = pd.DataFrame(summary_data, columns=['Matrix_subsample', 'Top1 (max, avg top 15)', 'Top2 (max, avg top 15)', 'Top3 (max, avg top 15)', 'Top4 (max, avg top 15)', 'Top5 (max, avg top 15)'])
-summary_df = summary_df.sort_values(by='Matrix_subsample')
+# Convert summary data to DataFrame
+summary_df = pd.DataFrame(summary_data, columns=['Matrix_subsample', 'Top1', 'Top2', 'Top3', 'Top4', 'Top5'])
+summary_df = summary_df.sort_values(by='Matrix_subsample')  # Sort DataFrame by 'Matrix_subsample'
+
+# Save the DataFrame to a .tsv file in the output directory
 summary_df.to_csv(os.path.join(output_dir, output_summary_file), sep='\t', index=False)
