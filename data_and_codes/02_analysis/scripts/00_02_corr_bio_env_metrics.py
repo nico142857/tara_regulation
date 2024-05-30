@@ -3,8 +3,7 @@ import os
 
 # Define input and output directories
 input_dir = '../../../out_results/out_correlation/correlation_bio_env'
-output_subdir = 'corr_metrics'
-output_dir = os.path.join(input_dir, output_subdir)
+output_dir = '../../../out_results/out_correlation/corr_metrics'
 os.makedirs(output_dir, exist_ok=True) # Ensure the output directory exists
 
 # Output filename
