@@ -28,10 +28,10 @@ for filename in os.listdir(input_dir):
             row_data = df.loc[row]
             max_val = row_data.max() if abs(row_data.max()) > abs(row_data.min()) else row_data.min()
             # Compute the average of the top 15 most correlated columns by absolute value
-            avg_top_15 = row_data.abs().nlargest(15).mean()
+            avg_top_5 = row_data.abs().nlargest(5).mean()
             
             # Format row data with max and average values
-            top_8_info.append(f"{row} (max: {max_val:.2f}, avg15: {avg_top_15:.2f})")
+            top_8_info.append(f"{row} (max: {max_val:.2f}, avg15: {avg_top_5:.2f})")
         
         # Extract matrix and subsample identifiers from the filename
         parts = filename.split('_')
