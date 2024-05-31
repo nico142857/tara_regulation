@@ -31,7 +31,7 @@ for filename in os.listdir(input_dir):
             avg_top_5 = row_data.abs().nlargest(5).mean()
             
             # Format row data with max and average values
-            top_8_info.append(f"{row} (max: {max_val:.2f}, avg15: {avg_top_5:.2f})")
+            top_8_info.append(f"{row} (max: {max_val:.2f}, avg5: {avg_top_5:.2f})")
         
         # Extract matrix and subsample identifiers from the filename
         parts = filename.split('_')
