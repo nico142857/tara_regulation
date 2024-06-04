@@ -111,10 +111,11 @@ def clr_(data, eps=1e-6):
 # In[64]:
 
 
-matrices = ['Matrix_MX_all', 'Matrix_M0_all', 'Matrix_M1_all', 'Matrix_guidi_all', 'Matrix_salazar_all', 'Matrix_stress_all',
+matrices = [#'Matrix_MX_all', 'Matrix_M0_all', 'Matrix_M1_all', 'Matrix_guidi_all', 'Matrix_salazar_all', 'Matrix_stress_all',
            'Matrix_GEN_M4_all', 'Matrix_GEN_M0_all','Matrix_GEN_M1_all', 'Matrix_GEN_guidi_all', 'Matrix_GEN_salazar_all', 'Matrix_GEN_stress_all'
            ]
-variables = ['polar', 'Layer', 'Layer2', 'Province', 'Temperature_binned', 'Oxygen_binned', 'ChlorophyllA_binned', 'Fluorescence_binned', 'Salinity_binned', 'NO3_binned', 'Mean_Flux_150m_binned', 'NPP_binned']
+variables = [#'polar', 'Layer', 'Layer2', 'Province', 'Temperature_binned',
+            'Oxygen_binned', 'ChlorophyllA_binned', 'Fluorescence_binned', 'Salinity_binned', 'NO3_binned', 'Mean_Flux_150m_binned', 'NPP_binned']
 #variables = ['Temperature_binned', 'Oxygen_binned']
 num_cycles = 100  # Number of cycles to run
 
