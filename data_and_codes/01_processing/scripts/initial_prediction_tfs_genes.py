@@ -33,33 +33,47 @@ md.head()
 
 # In[10]:
 
-
+# Temperature
 bins_temperature = [-np.inf, 10, 22, np.inf]
 labels_temperature = ['<10', '10-22', '>22']
-md['Temperature_binned'] = pd.cut(md['Temperature'], bins=bins_temperature, labels=labels_temperature)
+temp_series = md['Temperature'].dropna()  # Drop NaN values before binning
+md.loc[temp_series.index, 'Temperature_binned'] = pd.cut(temp_series, bins=bins_temperature, labels=labels_temperature)
 
+# Oxygen
 bins_oxygen = [-np.inf, 185, 250, np.inf]
 labels_oxygen = ['<185', '185-250', '>250']
-md['Oxygen_binned'] = pd.cut(md['Oxygen'], bins=bins_oxygen, labels=labels_oxygen)
+oxygen_series = md['Oxygen'].dropna()
+md.loc[oxygen_series.index, 'Oxygen_binned'] = pd.cut(oxygen_series, bins=bins_oxygen, labels=labels_oxygen)
 
-md['ChlorophyllA_binned'] = np.where(md['ChlorophyllA'] <= 0.28, '<=0.28', '>0.28')
+# ChlorophyllA
+chloro_series = md['ChlorophyllA'].dropna()
+md.loc[chloro_series.index, 'ChlorophyllA_binned'] = np.where(chloro_series <= 0.28, '<=0.28', '>0.28')
 
-md['Fluorescence_binned'] = np.where(md['Fluorescence'] <= 2.3, '<=2.3', '>2.3')
+# Fluorescence
+fluor_series = md['Fluorescence'].dropna()
+md.loc[fluor_series.index, 'Fluorescence_binned'] = np.where(fluor_series <= 2.3, '<=2.3', '>2.3')
 
+# Salinity
 bins_salinity = [-np.inf, 34, 37, np.inf]
 labels_salinity = ['<=34', '34-37', '>37']
-md['Salinity_binned'] = pd.cut(md['Salinity'], bins=bins_salinity, labels=labels_salinity)
+salinity_series = md['Salinity'].dropna()
+md.loc[salinity_series.index, 'Salinity_binned'] = pd.cut(salinity_series, bins=bins_salinity, labels=labels_salinity)
 
-md['NO3_binned'] = np.where(md['NO3'] <= 7, '<=7', '>7')
+# NO3
+no3_series = md['NO3'].dropna()
+md.loc[no3_series.index, 'NO3_binned'] = np.where(no3_series <= 7, '<=7', '>7')
 
+# Mean Flux at 150m (Carbon Export)
 bins_flux = [-np.inf, 0.7, 3, np.inf]
 labels_flux = ['<=0.7', '0.7-3', '>3']
-md['Mean_Flux_150m_binned'] = pd.cut(md['Mean Flux at 150m'], bins=bins_flux, labels=labels_flux)
+flux_series = md['Mean Flux at 150m'].dropna()
+md.loc[flux_series.index, 'Mean_Flux_150m_binned'] = pd.cut(flux_series, bins=bins_flux, labels=labels_flux)
 
+# NPP 8d VGPM (mgC/m2/day)
 bins_npp = [-np.inf, 275, 540, np.inf]
 labels_npp = ['<=275', '275-540', '>540']
-md['NPP_binned'] = pd.cut(md['NPP 8d VGPM (mgC/m2/day)'], bins=bins_npp, labels=labels_npp)
-
+npp_series = md['NPP 8d VGPM (mgC/m2/day)'].dropna()
+md.loc[npp_series.index, 'NPP_binned'] = pd.cut(npp_series, bins=bins_npp, labels=labels_npp)
 
 # # CLR implementation
 
@@ -98,7 +112,7 @@ def clr_(data, eps=1e-6):
 
 
 matrices = ['Matrix_MX_all', 'Matrix_M0_all', 'Matrix_M1_all', 'Matrix_guidi_all', 'Matrix_salazar_all', 'Matrix_stress_all',
-           'Matrix_GEN_M4_all', 'Matrix_GEN_M0_all','Matrix_GEN_M1_all', 'Matrix_GEN_guidi_all', 'Matrix_GEN_salazar_all', 'Matrix_GEN_stress_all'
+           #'Matrix_GEN_M4_all', 'Matrix_GEN_M0_all','Matrix_GEN_M1_all', 'Matrix_GEN_guidi_all', 'Matrix_GEN_salazar_all', 'Matrix_GEN_stress_all'
            ]
 variables = ['polar', 'Layer', 'Layer2', 'Province', 'Temperature_binned', 'Oxygen_binned', 'ChlorophyllA_binned', 'Fluorescence_binned', 'Salinity_binned', 'NO3_binned', 'Mean_Flux_150m_binned', 'NPP_binned']
 #variables = ['Temperature_binned', 'Oxygen_binned']
@@ -146,7 +160,7 @@ for matrix_name in tqdm(matrices, desc='Processing matrices'):
         results.append({'matrix_type': '_'.join(matrix_name.split('_')[1:]), 'variable': variable, **avg_scores})
 
 # Save results
-output_file = 'initial_prediction_tf_vs_gen'
+output_file = 'initial_prediction_tf_vs_gen_new'
 out_dir = '../../../out_results/out_initial_predictions/'
 os.makedirs(out_dir, exist_ok=True)
 
