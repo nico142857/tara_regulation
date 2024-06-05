@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import statsmodels.api as sm
 import os
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # CLR implementation
 def clr_(data, eps=1e-6):
@@ -23,7 +25,7 @@ def clr_(data, eps=1e-6):
 
     return clr_data
 
-input_dir = '../00_matrices'
+input_dir = '../../00_matrices'
 output_dir = '../../../out_results/out_regressions'
 
 # Ensure output directory exists
