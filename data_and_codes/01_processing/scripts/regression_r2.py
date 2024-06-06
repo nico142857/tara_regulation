@@ -28,7 +28,7 @@ os.makedirs(output_dir, exist_ok=True)
 md = pd.read_csv(f'{input_dir}/metadata.tsv', sep='\t', index_col=0)
 
 matrix_types = ['MX', 'M0', 'M1', 'guidi', 'salazar', 'stress']
-escenarios = ['all', 'polar', 'nonpolar', 'srf', 'epi', 'epi-nonpolar', 'srf-nonpolar']
+escenarios = ['all', 'polar', 'nonpolar', 'srf', 'epi', 'epi-nonpolar']
 env_vars = ['Temperature', 'Oxygen', 'ChlorophyllA', 'Salinity', 'Carbon.total', 'NO2', 'NO3', 'PO4',
             'Ammonium.5m', 'Iron.5m', 'Alkalinity.total', 'CO3', 'HCO3', 'Si', 'Mean Flux at 150m', 'NPP 8d VGPM (mgC/m2/day)']
 
