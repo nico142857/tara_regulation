@@ -5,3 +5,7 @@ data_and_codes/02_analysis/.DS_Store
 out_results/.DS_Store
 out_results/out_correlation/.DS_Store
 out_results/out_correlation/correlation_bio_env/.DS_Store
+.ipynb_checkpoints/
+data_and_codes/.ipynb_checkpoints/
+data_and_codes/01_processing/.ipynb_checkpoints/
+data_and_codes/02_analysis/scripts/.ipynb_checkpoints/
