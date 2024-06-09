@@ -17,3 +17,5 @@ For each matrix type (`MX`, `M0`, `M1`, `guidi`, `salazar`, `stress`):
 
 - **`fingerprint_tara_10_comparison2_<matrix_type>.pdf`**:
   Line plots of the mean clr-abundance values of TFs for Tara Oceans, Human Gut, and Lake Water samples. The plots include shaded areas representing standard deviation and a correlation table showing the correlation coefficients between the mean clr-abundance values of the three sample types, ordered by the sample `TSC013` and filtered by selected samples [1] for each specified matrix type.
+
+## All the codes and results were provided by Nicolas Toro-Llanco
