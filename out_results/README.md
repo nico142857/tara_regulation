@@ -33,7 +33,7 @@ contains XGBoost classification models designed to classify various environmenta
 
 The hyperparameters for the XGBoost models were optimized using a tree-based algorithm from the 'Hyperopt' library. A public-private dataset approach was employed for final validation. Classification reports are included in this folder.
 
-### out_shap_values
+### `out_shap_values`
 It contains SHAP (SHapley Additive exPlanations) values computed for each transcription factor (TF) in the classification models mentioned above. These values are used to identify TFs that significantly impact the model predictions.
 
 ### `out_reg_genes`
