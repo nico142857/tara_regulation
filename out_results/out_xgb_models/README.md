@@ -3,12 +3,12 @@ This folder contains all trained XGBoost models used for the classification of d
 
 ### File Naming Convention
 The files are named according to the following pattern:
-- **model_{matrix_type}_{subsample}_{environmental_variable_to_classify}.pkl**
+- **model_`matrix_type`_`subsample`_`environmental_variable_to_classify`.pkl**
 
 Where:
-- **{matrix_type}**: Refers to the regulatory matrix used as a predictor.
-- **{subsample}**: Indicates the locations from which the samples were taken.
-- **{environmental_variable_to_classify}**: Specifies the target variables that the models are designed to classify.
+- **`matrix_type`**: Refers to the regulatory matrix used as a predictor.
+- **`subsample`**: Indicates the locations from which the samples were taken.
+- **`environmental_variable_to_classify`**: Specifies the target variables that the models are designed to classify.
 
 ### Description
 Each model file is a serialized Python object that can be deserialized using the `pickle` library. These models are trained using the XGBoost algorithm, which is optimized for performance and accuracy in classification tasks.
