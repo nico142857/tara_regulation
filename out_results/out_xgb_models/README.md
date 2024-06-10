@@ -20,5 +20,3 @@ To utilize these models, ensure that Python and the XGBoost library are installe
 Developed by: **Nicolas Toro-Llanco**
 - **Email**: [ntoro@dim.uchile.cl](mailto:ntoro@dim.uchile.cl)
 - **GitHub**: [github.com/nico142857](https://github.com/nico142857)
-
-Special thanks to additional contributors for assistance with data collection and model testing.
