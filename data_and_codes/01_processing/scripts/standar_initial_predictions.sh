@@ -12,4 +12,4 @@
 
 # command line process down here.
 
-python initial_prediction_tfs_genes.py
+python 03_00_initial_prediction_tfs_genes.py
