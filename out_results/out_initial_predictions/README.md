@@ -15,7 +15,7 @@ This folder contains metric files for two types of classification tasks using tr
    - **Format**: Structured with:
      - **Target**: The environmental variable being classified (e.g., Temperature, Oxygen, Fluorescence).
      - **F1_Score**: The F1 score achieved for the classification of the respective target.
-     - **Matrix_Type**: The model matrix type used in the classification (e.g., MX, M0, M1, guidi, salazar).
+     - **Matrix_Type**: The model matrix type used in the classification (e.g., `MX`, `M0`, `M1`, `guidi`, `salazar`).
 
 ### Credits
 Developed by: **Nicolas Toro-Llanco**
