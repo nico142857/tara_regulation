@@ -3,7 +3,7 @@ This folder contains all trained XGBoost models used for the classification of d
 
 ### File Naming Convention
 The files are named according to the following pattern:
-- **model_`matrix_type`_`subsample`_`environmental_variable_to_classify`.pkl**
+- **`model_<matrix_type>_<subsample>_<environmental_variable_to_classify>.pkl`**
 
 Where:
 - **`matrix_type`**: Refers to the regulatory matrix used as a predictor.
