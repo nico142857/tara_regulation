@@ -19,3 +19,8 @@ Keep in mind that the target variables were classified in specific samples subse
 - Surface samples | polar/non polar, temperature (Low <=10°C, Mid 10-22°C, High >22°C), province (Fremont et. al. 2022)
 - Nonpolar samples | Layer (Surface, DCM, Mesopelagic), Layer2 (Epipelagic, Mesopelagic)
 - Epi-nonpolar samples | NO3 (Low <=7, High > 7), NPP (Low <=275, Mid 275-540, High >540), CarbonExport Mean Flux at 150m (Low <=0.7, Mid 0.7-3, High >3)
+
+### Credits
+Developed by: **Nicolas Toro-Llanco**
+- **Email**: [ntoro@dim.uchile.cl](mailto:ntoro@dim.uchile.cl)
+- **GitHub**: [github.com/nico142857](https://github.com/nico142857)
