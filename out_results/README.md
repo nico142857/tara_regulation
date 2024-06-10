@@ -13,6 +13,9 @@ It includes a series of detailed plots and visualizations representing centered 
 ### out_correlation
 It contains heatmaps, clustermaps, and networks of correlation between the variables involved in this study: TFs abundance matrices and environmental data collected by Tara.
 
+### out_regressions
+It contains initial analysis on the regressions between TFs clr-abundance and environmental variables.
+
 ### out_initial_predictions
 It contains initial exploratory results aimed at investigating the capacity of transcription factors (TFs) to sense the environment
 
@@ -35,3 +38,13 @@ It contains SHAP (SHapley Additive exPlanations) values computed for each transc
 
 ### out_reg_genes
 It contains lists of regulated genes for specific transcription factors (TFs). These TFs were identified based on SHAP values, a combination of SHAP values and most correlated TFs, or TFs correlated with specific environmental variables.
+
+### Credits
+The results presented in this folder are a collaborative effort made by the following researchers:
+
+- **Iñaki Hojas**
+  - **Email**: [ihojas92@gmail.com](mailto:ihojas92@gmail.com)
+
+- **Nicolas Toro-Llanco**
+  - **Email**: [ntoro@dim.uchile.cl](mailto:ntoro@dim.uchile.cl)
+  - **GitHub**: [github.com/nico142857](https://github.com/nico142857)
