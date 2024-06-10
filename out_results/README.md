@@ -10,16 +10,16 @@ It includes a series of detailed plots and visualizations representing centered 
 - Scatter plots that correlate abundances between different samples, such as those from Tara Oceans and human gut samples.
 - Annotations of correlation coefficients and linear regression equations, providing clear statistical interpretation. 
 
-### out_correlation
+### ´out_correlation´
 It contains heatmaps, clustermaps, and networks of correlation between the variables involved in this study: TFs abundance matrices and environmental data collected by Tara.
 
-### out_regressions
+### ´out_regressions´
 It contains initial analysis on the regressions between TFs clr-abundance and environmental variables.
 
-### out_initial_predictions
+### ´out_initial_predictions´
 It contains initial exploratory results aimed at investigating the capacity of transcription factors (TFs) to sense the environment
 
-### out_xgb_models
+### ´out_xgb_models´
 contains XGBoost classification models designed to classify various environmental variables using transcription factor (TF) abundances as predictors (matrix types MX, M0, etc.). The classifications include:
 
 - polar / non polar | on surface samples
@@ -36,7 +36,7 @@ The hyperparameters for the XGBoost models were optimized using a tree-based alg
 ### out_shap_values
 It contains SHAP (SHapley Additive exPlanations) values computed for each transcription factor (TF) in the classification models mentioned above. These values are used to identify TFs that significantly impact the model predictions.
 
-### out_reg_genes
+### ´out_reg_genes´
 It contains lists of regulated genes for specific transcription factors (TFs). These TFs were identified based on SHAP values, a combination of SHAP values and most correlated TFs, or TFs correlated with specific environmental variables.
 
 ### Credits
