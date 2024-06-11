@@ -44,6 +44,7 @@ The results presented in this folder are a collaborative effort made by the foll
 
 - **Iñaki Hojas**
   - **Email**: [ihojas92@gmail.com](mailto:ihojas92@gmail.com)
+  - **GitHub**: [github.com/iehr](https://github.com/iehr)
 
 - **Nicolas Toro-Llanco**
   - **Email**: [ntoro@dim.uchile.cl](mailto:ntoro@dim.uchile.cl)
