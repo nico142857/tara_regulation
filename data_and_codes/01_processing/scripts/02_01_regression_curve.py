@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import seaborn as sns
 import matplotlib.pyplot as plt
+from scipy.stats import linregress
 
 # CLR implementation (from your provided code)
 def clr_(data, eps=1e-6):
@@ -46,12 +47,21 @@ for filename in os.listdir(input_dir_r2):
         # Generate jointplots for each pair
         for (row, column) in high_r2_pairs:
             if row in clr_df.columns and column in aligned_md.columns:
+                x_data = aligned_md[column].dropna() # Handle nan values
+                y_data = clr_df[row].loc[x_data.index]
                 sns.regplot(
-                    x=aligned_md[column],
-                    y=clr_df[row],
+                    x=x_data,
+                    y=y_data,
                     scatter_kws={'alpha': 0.8},
-                    line_kws={'color': 'red', 'alpha' : 0.5}
+                    line_kws={'color': 'red', 'alpha': 0.5}
                 )
+                
+                slope, intercept, r_value, p_value, std_err = linregress(x_data, y_data)
+                r_squared = round(r_value**2, 2)
+                equation = f'y = {slope:.3f}x + {intercept:.3f}'
+                plt.annotate(r'$R^2 = {}$'.format(r_squared), xy=(0.05, 0.95), xycoords='axes fraction', fontsize=10, verticalalignment='top')
+                plt.annotate(r'${}$'.format(equation), xy=(0.05, 0.90), xycoords='axes fraction', fontsize=10, verticalalignment='top')
+
                 plt.title(f'Scatter Plot for {matrix_type}, {subsample}: {row} vs {column}')
                 plt.xlabel(column)
                 plt.ylabel(row)
