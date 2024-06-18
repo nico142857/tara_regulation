@@ -7,7 +7,7 @@ output_dir = '../../../out_results/out_correlation/corr_metrics'
 os.makedirs(output_dir, exist_ok=True) # Ensure the output directory exists
 
 # Output filename
-output_summary_file = 'corr_top8_env.tsv'
+output_summary_file = 'corr_top8_env_by_bio_vs_env.tsv'
 
 summary_data = []
 
