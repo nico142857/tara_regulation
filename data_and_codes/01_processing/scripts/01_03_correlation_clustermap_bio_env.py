@@ -75,14 +75,16 @@ for matrix in matrix_types:
             reordered_corr.to_csv(f'{output_file}.tsv', sep='\t')
 
             # Plot
-            fig, ax = plt.subplots(figsize=(10, 20))
+            fig, ax = plt.subplots(figsize=(30, 20))
             ax.set_facecolor('white')
             ax.imshow(np.ones_like(reordered_corr), cmap='gray_r', interpolation='nearest')
+
             ax.set_xticks(np.arange(len(reordered_corr.columns)))
             ax.set_yticks(np.arange(len(reordered_corr.index)))
             ax.tick_params(axis='x', which='both', labelbottom=False, labeltop=True, bottom=False, top=True, length=0)
             ax.set_yticklabels(reordered_corr.index, fontsize=8, color="black")
             ax.set_xticklabels(reordered_corr.columns, fontsize=8, color="black", rotation=90)
+
             ax.set_xticks(np.arange(len(reordered_corr.columns) + 1) - .5, minor=True)
             ax.set_yticks(np.arange(len(reordered_corr.index) + 1) - .5, minor=True)
             ax.grid(which="minor", color="lightgray", linestyle="-", linewidth=1)
@@ -99,8 +101,8 @@ for matrix in matrix_types:
                     size = abs(correlation) * 1  # Adjust size factor as needed
                     rect = Rectangle(xy=(i - size / 2, j - size / 2), width=size, height=size, facecolor=color)
                     ax.add_patch(rect)
-
-            plt.colorbar(sm, ax=ax, shrink=0.5, aspect=20, pad=0.04).set_label('Correlation')
+            # Add colorbar
+            plt.colorbar(sm, ax=ax, shrink=0.4, aspect=20, pad=0.04).set_label('Correlation')
             plt.savefig(f'{output_file}.pdf', bbox_inches='tight')
             plt.close()
 
