@@ -82,8 +82,8 @@ for matrix in matrix_types:
             ax.set_xticks(np.arange(len(reordered_corr.columns)))
             ax.set_yticks(np.arange(len(reordered_corr.index)))
             ax.tick_params(axis='x', which='both', labelbottom=False, labeltop=True, bottom=False, top=True, length=0)
-            ax.set_yticklabels(reordered_corr.index, fontsize=8, color="black")
-            ax.set_xticklabels(reordered_corr.columns, fontsize=8, color="black", rotation=90)
+            ax.set_yticklabels(reordered_corr.index, fontsize=13, color="black")
+            ax.set_xticklabels(reordered_corr.columns, fontsize=13, color="black", rotation=90)
 
             ax.set_xticks(np.arange(len(reordered_corr.columns) + 1) - .5, minor=True)
             ax.set_yticks(np.arange(len(reordered_corr.index) + 1) - .5, minor=True)

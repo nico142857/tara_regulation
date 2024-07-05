@@ -59,8 +59,8 @@ for matrix_type in matrix_types:
             ax.set_xticks(np.arange(len(corr_df.columns)))
             ax.set_yticks(np.arange(len(corr_df.index)))
             ax.tick_params(axis='x', which='both', labelbottom=False, labeltop=True, bottom=False, top=True, length=0)
-            ax.set_yticklabels(corr_df.index, fontsize=8, color="black")
-            ax.set_xticklabels(corr_df.columns, fontsize=8, color="black", rotation=90)
+            ax.set_yticklabels(corr_df.index, fontsize=13, color="black")
+            ax.set_xticklabels(corr_df.columns, fontsize=13, color="black", rotation=90)
 
             # Create grid lines between the tick labels
             ax.set_xticks(np.arange(len(corr_df.columns) + 1) - .5, minor=True)

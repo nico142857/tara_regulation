@@ -75,8 +75,8 @@ for matrix in matrix_types:
             ax.set_xticks(np.arange(len(corr_md_clr.columns)))
             ax.set_yticks(np.arange(len(corr_md_clr.index)))
             ax.tick_params(axis='x', which='both', labelbottom=False, labeltop=True, bottom=False, top=True, length=0)
-            ax.set_yticklabels(corr_md_clr.index, fontsize=8, color="black")
-            ax.set_xticklabels(corr_md_clr.columns, fontsize=8, color="black", rotation=90)
+            ax.set_yticklabels(corr_md_clr.index, fontsize=13, color="black")
+            ax.set_xticklabels(corr_md_clr.columns, fontsize=13, color="black", rotation=90)
 
             # Create grid lines and add rectangle around the grid
             ax.set_xticks(np.arange(len(corr_md_clr.columns) + 1) - .5, minor=True)
