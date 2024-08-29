@@ -18,9 +18,9 @@ for filename in os.listdir(input_dir):
         filepath = os.path.join(input_dir, filename)
         df = pd.read_csv(filepath, sep='\t', index_col=0)
         
-        # Calculate the absolute sums of each row to determine the top 5 rows
+        # Calculate the absolute sums of each row to determine the top rows
         abs_sums = df.abs().sum(axis=1)
-        top_rows = abs_sums.sort_values(ascending=False).index[:8]  # Get the top 5 correlated row names
+        top_rows = abs_sums.sort_values(ascending=False).index[:8]  # Get the top 8 correlated row names
         
         top_8_info = []
         for row in top_rows:

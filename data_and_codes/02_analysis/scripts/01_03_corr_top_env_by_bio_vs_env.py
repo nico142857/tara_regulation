@@ -20,7 +20,7 @@ for filename in os.listdir(input_dir):
         
         # Calculate the absolute sums of each column to determine the top 5 columns
         abs_sums = df.abs().sum()
-        sorted_columns = abs_sums.sort_values(ascending=False).index[:8]  # Get the top 5 correlated column names
+        sorted_columns = abs_sums.sort_values(ascending=False).index[:8]  # Get the top 8 correlated column names
         
         top_8_info = []
         for col in sorted_columns:
