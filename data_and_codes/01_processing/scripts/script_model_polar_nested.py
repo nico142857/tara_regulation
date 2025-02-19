@@ -23,12 +23,12 @@ from tqdm import tqdm
 # Upload data
 # --------------------------
 input_dir = '../../00_matrices'
-out_dir = '../../../out_results/out_xgb_models'
-filename = sys.argv[1]
-parts = filename.split('_')
+out_dir   = '../../../out_results/out_xgb_models'
+filename  = sys.argv[1]
+parts     = filename.split('_')
 matrix_type = parts[1] if len(parts) > 1 else None
-subsample = parts[2].split('.')[0] if len(parts) > 2 else None
-target = 'polar'
+subsample   = parts[2].split('.')[0] if len(parts) > 2 else None
+target      = 'polar'
 
 # Biological matrix
 df = pd.read_csv(f'{input_dir}/{filename}', sep='\t', index_col=[0])
@@ -53,7 +53,7 @@ def clr_(data, eps=1e-6):
     Perform centered log-ratio (CLR) normalization on a dataset.
     
     Parameters:
-        data (pandas.DataFrame): Samples as rows, components as columns.
+        data (pandas.DataFrame): Samples as rows and components as columns.
     Returns:
         pandas.DataFrame: CLR-normalized data.
     """
@@ -94,15 +94,15 @@ y_total = aligned_md['polar'].copy()
 # Drop rows with NaN in the target
 valid_indices = y_total.dropna().index
 y_total = y_total.loc[valid_indices]
-clr_df = clr_df.loc[valid_indices]
+clr_df   = clr_df.loc[valid_indices]
 
 # For binary classification, ensure target is integer type (0/1)
 y_total = y_total.astype(int)
 
-# Exclude private samples from training data
+# Exclude private samples from training data and store as X_full_train and y_full_train
 mask = ~clr_df.index.isin(private_list)
-X_train = clr_df.loc[mask]
-y_train = y_total.loc[mask]
+X_full_train = clr_df.loc[mask]
+y_full_train = y_total.loc[mask]
 
 # --------------------------
 # Nested Cross-Validation Setup
@@ -133,7 +133,7 @@ def tune_hyperparameters(X_train_cv, y_train_cv, max_evals=100):
             'reg_alpha': params['reg_alpha'],
             'reg_lambda': params['reg_lambda'],
         }
-        # For binary classification, use "binary:logistic"
+        # Use binary:logistic for binary classification (polar)
         clf = xgb.XGBClassifier(**params_casted, objective='binary:logistic')
         inner_cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=25, random_state=42)
         score = cross_val_score(clf, X_train_cv, y_train_cv, scoring='f1', cv=inner_cv).mean()
@@ -148,13 +148,12 @@ outer_cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 outer_scores = []
 
 print("Starting Nested Cross-Validation for 'polar'...")
-for train_idx, test_idx in outer_cv.split(X_train, y_train):
-    X_train_fold = X_train.iloc[train_idx]
-    y_train_fold = y_train.iloc[train_idx]
-    X_test_fold  = X_train.iloc[test_idx]
-    y_test_fold  = y_train.iloc[test_idx]
+for train_idx, test_idx in outer_cv.split(X_full_train, y_full_train):
+    X_train_fold = X_full_train.iloc[train_idx]
+    y_train_fold = y_full_train.iloc[train_idx]
+    X_test_fold  = X_full_train.iloc[test_idx]
+    y_test_fold  = y_full_train.iloc[test_idx]
     
-    # Tune hyperparameters on the training fold using inner CV
     best_fold = tune_hyperparameters(X_train_fold, y_train_fold, max_evals=100)
     best_params_fold = {
         'n_estimators': int(best_fold['n_estimators']),
@@ -182,7 +181,7 @@ print("Nested CV average F1 Score on outer folds:", avg_outer_score)
 # Final Model Training and Evaluation on Private List
 # --------------------------
 print("Tuning final hyperparameters on all training data...")
-best_final = tune_hyperparameters(X_train, y_train, max_evals=1000)
+best_final = tune_hyperparameters(X_full_train, y_full_train, max_evals=1000)
 final_params = {
     'n_estimators': int(best_final['n_estimators']),
     'max_depth': int(best_final['max_depth']),
@@ -199,14 +198,13 @@ final_params = {
 print("Best final parameters:", final_params)
 
 final_model = xgb.XGBClassifier(**final_params)
-final_model.fit(X_train, y_train)
+final_model.fit(X_full_train, y_full_train)
 
 # Evaluate on the private hold-out set
 private_data = clr_df.loc[private_list]
 private_labels = y_total.loc[private_list]
-private_predictions = final_model.predict(private_data)
-private_accuracy = accuracy_score(private_labels, private_predictions)
-private_f1 = f1_score(private_labels, private_predictions, average='binary')
+private_accuracy = accuracy_score(private_labels, final_model.predict(private_data))
+private_f1 = f1_score(private_labels, final_model.predict(private_data), average='binary')
 
 print("Accuracy on Private List:", private_accuracy)
 print("F1 Score on Private List:", private_f1)
@@ -216,15 +214,15 @@ print("F1 Score on Private List:", private_f1)
 # --------------------------
 escenario_target = f'{matrix_type}_{subsample}_{target}'
 
-model_filename = f'model_{escenario_target}.pkl'
+model_filename = f'model_{escenario_target}_nested.pkl'
 with open(f'{out_dir}/{model_filename}', 'wb') as file:
     pickle.dump(final_model, file)
 
-params_filename = f'best_hyperparameters_{escenario_target}.json'
+params_filename = f'best_hyperparameters_{escenario_target}_nested.json'
 with open(f'{out_dir}/metrics/{params_filename}', 'w') as file:
     json.dump(final_params, file)
 
-metrics_filename = f'evaluation_metrics_{escenario_target}.json'
+metrics_filename = f'evaluation_metrics_{escenario_target}_nested.json'
 with open(f'{out_dir}/metrics/{metrics_filename}', 'w') as file:
     json.dump({'Nested CV Average F1 Score': avg_outer_score,
                'Private Accuracy': private_accuracy,

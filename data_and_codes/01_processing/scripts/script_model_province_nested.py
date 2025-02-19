@@ -53,7 +53,7 @@ def clr_(data, eps=1e-6):
     Perform centered log-ratio (CLR) normalization on a dataset.
     
     Parameters:
-        data (pandas.DataFrame): Samples as rows, components as columns.
+        data (pandas.DataFrame): Samples as rows and components as columns.
     Returns:
         pandas.DataFrame: CLR-normalized data.
     """
@@ -80,8 +80,7 @@ private_list = ['TSC021',  # TARA_031 non polar, HIGH
                 'TSC237',  # TARA_150 non polar, MID
                 'TSC261',  # TARA_189 polar, LOW
                 'TSC276',  # TARA_208 polar, LOW
-                # Optionally, 'TSC285' can be added if needed
-               ]
+                'TSC285']  # TARA_163 polar, LOW
 
 # --------------------------
 # Model optimization data prep
@@ -95,23 +94,23 @@ y_total = aligned_md['Province'].copy()
 # Drop rows with NaN in the target
 valid_indices = y_total.dropna().index
 y_total = y_total.loc[valid_indices]
-clr_df   = clr_df.loc[valid_indices]
+clr_df = clr_df.loc[valid_indices]
 
-# Encode target labels (sorted order)
+# Encode target labels using a sorted order
 unique_labels = sorted(y_total.unique())
 le = LabelEncoder()
 le.fit(unique_labels)
 y_encoded = le.transform(y_total)
 
-# Exclude private samples from training data
+# Exclude private samples from training data and store in X_full_train and y_full_train
 mask = ~clr_df.index.isin(private_list)
-X_train = clr_df.loc[mask]
-y_train = y_encoded[mask]
+X_full_train = clr_df.loc[mask]
+y_full_train = y_encoded[mask]
 
 # --------------------------
 # Nested Cross-Validation Setup
 # --------------------------
-def tune_hyperparameters(X_tr, y_tr, max_evals=100):
+def tune_hyperparameters(X_train_cv, y_train_cv, max_evals=100):
     # Define hyperparameter search space
     space = {
         'n_estimators': hp.quniform('n_estimators', 100, 350, 50),
@@ -137,12 +136,12 @@ def tune_hyperparameters(X_tr, y_tr, max_evals=100):
             'reg_alpha': params['reg_alpha'],
             'reg_lambda': params['reg_lambda'],
         }
-        # For multi-class classification, use "multi:softmax" with num_class set to the number of unique labels.
-        clf = xgb.XGBClassifier(**params_casted, objective='multi:softmax', num_class=len(np.unique(y_tr)))
+        # Use multi:softmax for multi-class classification
+        clf = xgb.XGBClassifier(**params_casted, objective='multi:softmax', num_class=len(np.unique(y_train_cv)))
         inner_cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=25, random_state=42)
-        score = cross_val_score(clf, X_tr, y_tr, scoring='f1_weighted', cv=inner_cv).mean()
-        return -score  # Negative because fmin minimizes the objective
-    
+        score = cross_val_score(clf, X_train_cv, y_train_cv, scoring='f1_weighted', cv=inner_cv).mean()
+        return -score  # Negative because fmin minimizes
+        
     trials = Trials()
     best = fmin(fn=objective, space=space, algo=tpe.suggest, max_evals=max_evals, trials=trials)
     return best
@@ -151,14 +150,14 @@ def tune_hyperparameters(X_tr, y_tr, max_evals=100):
 outer_cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 outer_scores = []
 
-print("Starting Nested Cross-Validation for Province...")
-for train_idx, test_idx in outer_cv.split(X_train, y_train):
-    X_tr_fold = X_train.iloc[train_idx]
-    y_tr_fold = y_train[train_idx]
-    X_te_fold = X_train.iloc[test_idx]
-    y_te_fold = y_train[test_idx]
+print("Starting Nested Cross-Validation for 'province'...")
+for train_idx, test_idx in outer_cv.split(X_full_train, y_full_train):
+    X_train_fold = X_full_train.iloc[train_idx]
+    y_train_fold = y_full_train[train_idx]
+    X_test_fold  = X_full_train.iloc[test_idx]
+    y_test_fold  = y_full_train[test_idx]
     
-    best_fold = tune_hyperparameters(X_tr_fold, y_tr_fold, max_evals=100)
+    best_fold = tune_hyperparameters(X_train_fold, y_train_fold, max_evals=100)
     best_params_fold = {
         'n_estimators': int(best_fold['n_estimators']),
         'max_depth': int(best_fold['max_depth']),
@@ -171,10 +170,10 @@ for train_idx, test_idx in outer_cv.split(X_train, y_train):
         'reg_lambda': best_fold['reg_lambda'],
     }
     
-    clf = xgb.XGBClassifier(**best_params_fold, objective='multi:softmax', num_class=len(np.unique(y_train)))
-    clf.fit(X_tr_fold, y_tr_fold)
-    y_pred_fold = clf.predict(X_te_fold)
-    fold_score = f1_score(y_te_fold, y_pred_fold, average='weighted')
+    clf = xgb.XGBClassifier(**best_params_fold, objective='multi:softmax', num_class=len(np.unique(y_full_train)))
+    clf.fit(X_train_fold, y_train_fold)
+    y_pred_fold = clf.predict(X_test_fold)
+    fold_score = f1_score(y_test_fold, y_pred_fold, average='weighted')
     outer_scores.append(fold_score)
     print(f"Outer Fold F1 Score: {fold_score:.4f}")
 
@@ -185,7 +184,7 @@ print("Nested CV average F1 Score on outer folds:", avg_outer_score)
 # Final Model Training and Evaluation on Private List
 # --------------------------
 print("Tuning final hyperparameters on all training data...")
-best_final = tune_hyperparameters(X_train, y_train, max_evals=1000)
+best_final = tune_hyperparameters(X_full_train, y_full_train, max_evals=1000)
 final_params = {
     'n_estimators': int(best_final['n_estimators']),
     'max_depth': int(best_final['max_depth']),
@@ -197,13 +196,13 @@ final_params = {
     'reg_alpha': best_final['reg_alpha'],
     'reg_lambda': best_final['reg_lambda'],
     'objective': 'multi:softmax',
-    'num_class': len(np.unique(y_train)),
+    'num_class': len(np.unique(y_full_train)),
 }
 
 print("Best final parameters:", final_params)
 
 final_model = xgb.XGBClassifier(**final_params)
-final_model.fit(X_train, y_train)
+final_model.fit(X_full_train, y_full_train)
 
 # Evaluate on the private hold-out set
 private_data = clr_df.loc[private_list]
@@ -221,15 +220,15 @@ print("F1 Score on Private List:", private_f1)
 # --------------------------
 escenario_target = f'{matrix_type}_{subsample}_{target}'
 
-model_filename = f'model_{escenario_target}.pkl'
+model_filename = f'model_{escenario_target}_nested.pkl'
 with open(f'{out_dir}/{model_filename}', 'wb') as file:
     pickle.dump(final_model, file)
 
-params_filename = f'best_hyperparameters_{escenario_target}.json'
+params_filename = f'best_hyperparameters_{escenario_target}_nested.json'
 with open(f'{out_dir}/metrics/{params_filename}', 'w') as file:
     json.dump(final_params, file)
 
-metrics_filename = f'evaluation_metrics_{escenario_target}.json'
+metrics_filename = f'evaluation_metrics_{escenario_target}_nested.json'
 with open(f'{out_dir}/metrics/{metrics_filename}', 'w') as file:
     json.dump({'Nested CV Average F1 Score': avg_outer_score,
                'Private Accuracy': private_accuracy,

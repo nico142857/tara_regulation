@@ -8,14 +8,12 @@ import matplotlib.pyplot as plt
 
 import xgboost as xgb  # Extreme Gradient Boosting Algorithm
 from hyperopt import fmin, tpe, Trials, hp  # Tree-based hyperparameter optimizer
-import pickle  # Saving the model
-import json  # For saving hyperparameters and metrics
+import pickle  # For saving the model
+import json    # For saving hyperparameters and metrics
 
 from sklearn.model_selection import StratifiedKFold, RepeatedStratifiedKFold, cross_val_score, train_test_split
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.preprocessing import LabelEncoder
-
-from scipy.stats import uniform
 
 import sys
 import shap
@@ -25,12 +23,12 @@ from tqdm import tqdm
 # Upload data
 # --------------------------
 input_dir = '../../00_matrices'
-out_dir = '../../../out_results/out_xgb_models'
-filename = sys.argv[1]
-parts = filename.split('_')
+out_dir   = '../../../out_results/out_xgb_models'
+filename  = sys.argv[1]
+parts     = filename.split('_')
 matrix_type = parts[1] if len(parts) > 1 else None
-subsample = parts[2].split('.')[0] if len(parts) > 2 else None
-target = 'layer2'
+subsample   = parts[2].split('.')[0] if len(parts) > 2 else None
+target      = 'layer2'
 
 # Biological matrix
 df = pd.read_csv(f'{input_dir}/{filename}', sep='\t', index_col=[0])
@@ -38,14 +36,14 @@ df = pd.read_csv(f'{input_dir}/{filename}', sep='\t', index_col=[0])
 md = pd.read_csv(f'{input_dir}/metadata.tsv', sep='\t', index_col=[0])
 
 # Define mappings for each column
-layer_mapping = {'SRF': 0, 'DCM': 1, 'MES': 2}
+layer_mapping  = {'SRF': 0, 'DCM': 1, 'MES': 2}
 layer2_mapping = {'EPI': 0, 'MES': 1}
-polar_mapping = {'non polar': 0, 'polar': 1}
+polar_mapping  = {'non polar': 0, 'polar': 1}
 
 md_encoded = md.copy()
-md_encoded['Layer'] = md_encoded['Layer'].map(layer_mapping)
+md_encoded['Layer']  = md_encoded['Layer'].map(layer_mapping)
 md_encoded['Layer2'] = md_encoded['Layer2'].map(layer2_mapping)
-md_encoded['polar'] = md_encoded['polar'].map(polar_mapping)
+md_encoded['polar']  = md_encoded['polar'].map(polar_mapping)
 
 # --------------------------
 # CLR implementation
@@ -53,7 +51,7 @@ md_encoded['polar'] = md_encoded['polar'].map(polar_mapping)
 def clr_(data, eps=1e-6):
     """
     Perform centered log-ratio (CLR) normalization on a dataset.
-
+    
     Parameters:
         data (pandas.DataFrame): Samples as rows and components as columns.
     Returns:
@@ -89,9 +87,7 @@ private_list = ['TSC021',  # TARA_031 SRF
                 'TSC215',  # TARA_133 MES
                 'TSC216',  # TARA_133 SRF
                 'TSC236',  # TARA_150 DCM
-                'TSC237',  # TARA_150 SRF
-               ]
-# (Layer2 has two classes: 0=EPI, 1=MES)
+                'TSC237']  # TARA_150 SRF
 
 # --------------------------
 # Model optimization data prep
@@ -102,21 +98,21 @@ aligned_md = md_encoded.loc[clr_df.index]  # Align metadata with CLR data
 # Create the target variable from the "Layer2" column
 y_total = aligned_md['Layer2'].copy()
 
-# Drop rows with NaN in the target (if any)
+# Drop rows with NaN in the target
 valid_indices = y_total.dropna().index
 y_total = y_total.loc[valid_indices]
-clr_df = clr_df.loc[valid_indices]
+clr_df   = clr_df.loc[valid_indices]
 
-# Exclude private samples from training data
+# Exclude private samples from training data; use X_full_train and y_full_train for clarity
 mask = ~clr_df.index.isin(private_list)
-X = clr_df.loc[mask]
-y = y_total.loc[mask]
+X_full_train = clr_df.loc[mask]
+y_full_train = y_total.loc[mask]
 
 # --------------------------
-# Nested Cross-Validation
+# Nested Cross-Validation Setup
 # --------------------------
-def tune_hyperparameters(X_train, y_train, max_evals=100):
-    # Define hyperparameter space
+def tune_hyperparameters(X_train_cv, y_train_cv, max_evals=100):
+    # Define hyperparameter search space
     space = {
         'n_estimators': hp.quniform('n_estimators', 100, 350, 50),
         'max_depth': hp.quniform('max_depth', 3, 10, 1),
@@ -141,26 +137,26 @@ def tune_hyperparameters(X_train, y_train, max_evals=100):
             'reg_alpha': params['reg_alpha'],
             'reg_lambda': params['reg_lambda'],
         }
-        # Use binary objective for Layer2 (binary classification)
+        # Use binary:logistic for binary classification of Layer2 (EPI vs MES)
         clf = xgb.XGBClassifier(**params_casted, objective='binary:logistic')
         inner_cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=25, random_state=42)
-        score = cross_val_score(clf, X_train, y_train, scoring='f1', cv=inner_cv).mean()
+        score = cross_val_score(clf, X_train_cv, y_train_cv, scoring='f1', cv=inner_cv).mean()
         return -score  # Negative because fmin minimizes
         
     trials = Trials()
     best = fmin(fn=objective, space=space, algo=tpe.suggest, max_evals=max_evals, trials=trials)
     return best
 
-# Outer CV to estimate performance
+# Outer CV loop for unbiased performance estimation
 outer_cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 outer_scores = []
 
-print("Starting Nested Cross-Validation for Layer2...")
-for train_idx, test_idx in outer_cv.split(X, y):
-    X_train_fold = X.iloc[train_idx]
-    y_train_fold = y.iloc[train_idx]
-    X_test_fold = X.iloc[test_idx]
-    y_test_fold = y.iloc[test_idx]
+print("Starting Nested Cross-Validation for 'Layer2'...")
+for train_idx, test_idx in outer_cv.split(X_full_train, y_full_train):
+    X_train_fold = X_full_train.iloc[train_idx]
+    y_train_fold = y_full_train.iloc[train_idx]
+    X_test_fold  = X_full_train.iloc[test_idx]
+    y_test_fold  = y_full_train.iloc[test_idx]
     
     best_fold = tune_hyperparameters(X_train_fold, y_train_fold, max_evals=100)
     best_params_fold = {
@@ -189,7 +185,7 @@ print("Nested CV average F1 Score on outer folds:", avg_outer_score)
 # Final Model Training and Evaluation on Private List
 # --------------------------
 print("Tuning final hyperparameters on all training data...")
-best_final = tune_hyperparameters(X, y, max_evals=1000)
+best_final = tune_hyperparameters(X_full_train, y_full_train, max_evals=1000)
 final_params = {
     'n_estimators': int(best_final['n_estimators']),
     'max_depth': int(best_final['max_depth']),
@@ -206,9 +202,9 @@ final_params = {
 print("Best final parameters:", final_params)
 
 final_model = xgb.XGBClassifier(**final_params)
-final_model.fit(X, y)
+final_model.fit(X_full_train, y_full_train)
 
-# Evaluate on private hold-out set
+# Evaluate on the private hold-out set
 private_data = clr_df.loc[private_list]
 private_labels = y_total.loc[private_list]
 private_predictions = final_model.predict(private_data)
@@ -223,15 +219,15 @@ print("F1 Score on Private List:", private_f1)
 # --------------------------
 escenario_target = f'{matrix_type}_{subsample}_{target}'
 
-model_filename = f'model_{escenario_target}.pkl'
+model_filename = f'model_{escenario_target}_nested.pkl'
 with open(f'{out_dir}/{model_filename}', 'wb') as file:
     pickle.dump(final_model, file)
 
-params_filename = f'best_hyperparameters_{escenario_target}.json'
+params_filename = f'best_hyperparameters_{escenario_target}_nested.json'
 with open(f'{out_dir}/metrics/{params_filename}', 'w') as file:
     json.dump(final_params, file)
 
-metrics_filename = f'evaluation_metrics_{escenario_target}.json'
+metrics_filename = f'evaluation_metrics_{escenario_target}_nested.json'
 with open(f'{out_dir}/metrics/{metrics_filename}', 'w') as file:
     json.dump({'Nested CV Average F1 Score': avg_outer_score,
                'Private Accuracy': private_accuracy,

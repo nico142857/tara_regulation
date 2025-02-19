@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 
 import xgboost as xgb  # Extreme Gradient Boosting Algorithm
 from hyperopt import fmin, tpe, Trials, hp  # Tree-based hyperparameter optimizer
-import pickle  # Saving the model
-import json  # For saving hyperparameters and metrics
+import pickle  # For saving the model
+import json    # For saving hyperparameters and metrics
 
 from sklearn.model_selection import StratifiedKFold, RepeatedStratifiedKFold, cross_val_score, train_test_split
 from sklearn.metrics import accuracy_score, f1_score
@@ -23,12 +23,12 @@ from tqdm import tqdm
 # Upload data
 # --------------------------
 input_dir = '../../00_matrices'
-out_dir = '../../../out_results/out_xgb_models'
-filename = sys.argv[1]
-parts = filename.split('_')
+out_dir   = '../../../out_results/out_xgb_models'
+filename  = sys.argv[1]
+parts     = filename.split('_')
 matrix_type = parts[1] if len(parts) > 1 else None
-subsample = parts[2].split('.')[0] if len(parts) > 2 else None
-target = 'cflux'
+subsample   = parts[2].split('.')[0] if len(parts) > 2 else None
+target      = 'cflux'
 
 # Biological matrix
 df = pd.read_csv(f'{input_dir}/{filename}', sep='\t', index_col=[0])
@@ -95,20 +95,20 @@ valid_indices = continuous_y.dropna().index
 continuous_y = continuous_y.loc[valid_indices]
 clr_df = clr_df.loc[valid_indices]
 
-# Bin the continuous target into a three-class target variable:
+# Bin the continuous target into a three-class variable:
 # 0 if flux < 0.7, 1 if flux is between 0.7 and 3, else 2.
 y_total = continuous_y.apply(lambda temp: 0 if temp < 0.7 else (1 if temp <= 3 else 2))
 
 # Exclude private samples from training data
 mask = ~clr_df.index.isin(private_list)
-X = clr_df.loc[mask]
-y = y_total.loc[mask]
+X_full_train = clr_df.loc[mask]
+y_full_train = y_total.loc[mask]
 
 # --------------------------
-# Nested Cross-Validation
+# Nested Cross-Validation Setup
 # --------------------------
-def tune_hyperparameters(X_train, y_train, max_evals=100):
-    # Define the hyperparameter search space (improved version)
+def tune_hyperparameters(X_train_cv, y_train_cv, max_evals=100):
+    # Define hyperparameter search space
     space = {
         'n_estimators': hp.quniform('n_estimators', 100, 350, 50),
         'max_depth': hp.quniform('max_depth', 3, 10, 1),
@@ -117,12 +117,11 @@ def tune_hyperparameters(X_train, y_train, max_evals=100):
         'subsample': hp.uniform('subsample', 0.5, 1),
         'colsample_bytree': hp.uniform('colsample_bytree', 0.5, 1),
         'gamma': hp.uniform('gamma', 0.0, 5.0),
-        'reg_alpha': hp.loguniform('reg_alpha', -5, 0),   # ~exp(-5) to 1
-        'reg_lambda': hp.loguniform('reg_lambda', -5, 2),   # ~exp(-5) to exp(2)
+        'reg_alpha': hp.loguniform('reg_alpha', -5, 0),
+        'reg_lambda': hp.loguniform('reg_lambda', -5, 2),
     }
     
     def objective(params):
-        # Cast parameters that should be integers
         params_casted = {
             'n_estimators': int(params['n_estimators']),
             'max_depth': int(params['max_depth']),
@@ -134,26 +133,26 @@ def tune_hyperparameters(X_train, y_train, max_evals=100):
             'reg_alpha': params['reg_alpha'],
             'reg_lambda': params['reg_lambda'],
         }
-        # For multi-class classification, use "multi:softmax" with num_class equal to unique y values.
-        clf = xgb.XGBClassifier(**params_casted, objective='multi:softmax', num_class=y_train.nunique())
+        # For multi-class classification, use multi:softmax
+        clf = xgb.XGBClassifier(**params_casted, objective='multi:softmax', num_class=y_train_cv.nunique())
         inner_cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=25, random_state=42)
-        score = cross_val_score(clf, X_train, y_train, scoring='f1_weighted', cv=inner_cv).mean()
-        return -score  # Negative because fmin minimizes
-        
+        score = cross_val_score(clf, X_train_cv, y_train_cv, scoring='f1_weighted', cv=inner_cv).mean()
+        return -score  # Negative because fmin minimizes the objective
+    
     trials = Trials()
     best = fmin(fn=objective, space=space, algo=tpe.suggest, max_evals=max_evals, trials=trials)
     return best
 
-# Outer CV to estimate performance
+# Outer CV loop for unbiased performance estimation
 outer_cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 outer_scores = []
 
-print("Starting Nested Cross-Validation for cflux...")
-for train_idx, test_idx in outer_cv.split(X, y):
-    X_train_fold = X.iloc[train_idx]
-    y_train_fold = y.iloc[train_idx]
-    X_test_fold = X.iloc[test_idx]
-    y_test_fold = y.iloc[test_idx]
+print("Starting Nested Cross-Validation for NPP...")
+for train_idx, test_idx in outer_cv.split(X_full_train, y_full_train):
+    X_train_fold = X_full_train.iloc[train_idx]
+    y_train_fold = y_full_train.iloc[train_idx]
+    X_test_fold  = X_full_train.iloc[test_idx]
+    y_test_fold  = y_full_train.iloc[test_idx]
     
     best_fold = tune_hyperparameters(X_train_fold, y_train_fold, max_evals=100)
     best_params_fold = {
@@ -168,7 +167,7 @@ for train_idx, test_idx in outer_cv.split(X, y):
         'reg_lambda': best_fold['reg_lambda'],
     }
     
-    clf = xgb.XGBClassifier(**best_params_fold, objective='multi:softmax', num_class=y.nunique())
+    clf = xgb.XGBClassifier(**best_params_fold, objective='multi:softmax', num_class=y_full_train.nunique())
     clf.fit(X_train_fold, y_train_fold)
     y_pred_fold = clf.predict(X_test_fold)
     fold_score = f1_score(y_test_fold, y_pred_fold, average='weighted')
@@ -182,7 +181,7 @@ print("Nested CV average F1 Score on outer folds:", avg_outer_score)
 # Final Model Training and Evaluation on Private List
 # --------------------------
 print("Tuning final hyperparameters on all training data...")
-best_final = tune_hyperparameters(X, y, max_evals=1000)
+best_final = tune_hyperparameters(X_full_train, y_full_train, max_evals=1000)
 final_params = {
     'n_estimators': int(best_final['n_estimators']),
     'max_depth': int(best_final['max_depth']),
@@ -194,20 +193,21 @@ final_params = {
     'reg_alpha': best_final['reg_alpha'],
     'reg_lambda': best_final['reg_lambda'],
     'objective': 'multi:softmax',
-    'num_class': y.nunique(),
+    'num_class': y_full_train.nunique(),
 }
 
 print("Best final parameters:", final_params)
 
 final_model = xgb.XGBClassifier(**final_params)
-final_model.fit(X, y)
+final_model.fit(X_full_train, y_full_train)
 
 # Evaluate on the private hold-out set
 private_data = clr_df.loc[private_list]
 private_labels = y_total.loc[private_list]
+private_labels_encoded = le.transform(private_labels)
 private_predictions = final_model.predict(private_data)
-private_accuracy = accuracy_score(private_labels, private_predictions)
-private_f1 = f1_score(private_labels, private_predictions, average='weighted')
+private_accuracy = accuracy_score(private_labels_encoded, private_predictions)
+private_f1 = f1_score(private_labels_encoded, private_predictions, average='weighted')
 
 print("Accuracy on Private List:", private_accuracy)
 print("F1 Score on Private List:", private_f1)
@@ -217,15 +217,15 @@ print("F1 Score on Private List:", private_f1)
 # --------------------------
 escenario_target = f'{matrix_type}_{subsample}_{target}'
 
-model_filename = f'model_{escenario_target}.pkl'
+model_filename = f'model_{escenario_target}_nested.pkl'
 with open(f'{out_dir}/{model_filename}', 'wb') as file:
     pickle.dump(final_model, file)
 
-params_filename = f'best_hyperparameters_{escenario_target}.json'
+params_filename = f'best_hyperparameters_{escenario_target}_nested.json'
 with open(f'{out_dir}/metrics/{params_filename}', 'w') as file:
     json.dump(final_params, file)
 
-metrics_filename = f'evaluation_metrics_{escenario_target}.json'
+metrics_filename = f'evaluation_metrics_{escenario_target}_nested.json'
 with open(f'{out_dir}/metrics/{metrics_filename}', 'w') as file:
     json.dump({'Nested CV Average F1 Score': avg_outer_score,
                'Private Accuracy': private_accuracy,
